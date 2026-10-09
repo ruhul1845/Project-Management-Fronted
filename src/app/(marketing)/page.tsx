@@ -46,8 +46,14 @@ const features = [
 export default function Home() {
   return (
     <main>
-      <section className="border-b border-slate-100 bg-white">
-        <div className="mx-auto flex max-w-5xl flex-col items-center px-5 pb-24 pt-24 text-center md:px-8 lg:pb-32 lg:pt-32">
+      <section className="relative overflow-hidden border-b border-slate-100 bg-white">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/img/bg.png')" }}
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/70 to-white/20" />
+        <div className="relative mx-auto flex max-w-5xl flex-col items-center px-5 pb-24 pt-24 text-center md:px-8 lg:pb-32 lg:pt-32">
           <h1 className="max-w-4xl text-[clamp(3.1rem,6vw,5.5rem)] font-semibold leading-[1.07] tracking-[-.065em] text-slate-950">
             Great work starts with{" "}
             <span className="text-blue-600">clear focus.</span>

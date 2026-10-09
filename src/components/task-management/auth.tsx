@@ -71,12 +71,12 @@ export function AuthFrame({
         </p>
       </div>
       <div
-        className="hidden bg-[#a0ddfc] px-12 pb-16 pt-20 lg:flex lg:flex-col xl:px-16 xl:pt-24"
+        className="hidden bg-white px-12 pb-16 pt-20 lg:flex lg:flex-col xl:px-16 xl:pt-24"
         style={{
-          backgroundImage: "url('/img/bg.png')",
+          backgroundImage: "url('/img/login-bg.jpg')",
           backgroundPosition: "center bottom",
           backgroundRepeat: "no-repeat",
-          backgroundSize: "100% auto",
+          backgroundSize: "90% auto",
         }}
       >
         <div className="mx-auto w-full max-w-lg">
