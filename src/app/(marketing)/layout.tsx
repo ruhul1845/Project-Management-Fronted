@@ -45,8 +45,7 @@ export default function MarketingLayout({
       <footer className="border-t border-slate-100 bg-[#fbfcfe]">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-3 md:px-8">
           <div>
-            <Brand />
-            <p className="mt-4 max-w-xs text-sm leading-6 text-slate-500">
+            <p className="max-w-xs text-sm leading-6 text-slate-500">
               A clearer way to plan, collaborate, and finish meaningful work.
             </p>
           </div>
