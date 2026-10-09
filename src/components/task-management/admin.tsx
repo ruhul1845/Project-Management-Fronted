@@ -34,7 +34,44 @@ export function AdminOverview() {
   const data = useQuery({
     queryKey: ["admin", "dashboard"],
     queryFn: async () => (await api<AdminMetrics>("admin/dashboard")).data,
+    refetchInterval: 60000,
   });
+  const figures = [
+    {
+      label: "Users",
+      value: data.data?.users ?? 0,
+      icon: UsersRound,
+      color: "bg-blue-600",
+    },
+    {
+      label: "Organizations",
+      value: data.data?.organizations ?? 0,
+      icon: Building2,
+      color: "bg-indigo-500",
+    },
+    {
+      label: "Projects",
+      value: data.data?.projects ?? 0,
+      icon: FolderKanban,
+      color: "bg-sky-500",
+    },
+    {
+      label: "Tasks",
+      value: data.data?.tasks ?? 0,
+      icon: FolderKanban,
+      color: "bg-cyan-500",
+    },
+    {
+      label: "Blocked users",
+      value: data.data?.blockedUsers ?? 0,
+      icon: UsersRound,
+      color: "bg-slate-500",
+    },
+  ];
+  const chartMax = Math.max(
+    5,
+    Math.ceil((Math.max(...figures.map((item) => item.value)) * 1.2) / 5) * 5,
+  );
   return (
     <AdminGate>
       <PageHeading
@@ -50,32 +87,72 @@ export function AdminOverview() {
           retry={() => data.refetch()}
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          {[
-            { label: "Users", value: data.data?.users, icon: UsersRound },
-            {
-              label: "Organizations",
-              value: data.data?.organizations,
-              icon: Building2,
-            },
-            {
-              label: "Projects",
-              value: data.data?.projects,
-              icon: FolderKanban,
-            },
-            { label: "Tasks", value: data.data?.tasks, icon: FolderKanban },
-            {
-              label: "Blocked users",
-              value: data.data?.blockedUsers,
-              icon: UsersRound,
-            },
-          ].map(({ label, value, icon: Icon }) => (
-            <div key={label} className="panel p-6">
-              <Icon className="text-blue-600" size={20} />
-              <p className="mt-6 text-sm text-slate-500">{label}</p>
-              <p className="mt-2 text-3xl font-semibold">{value ?? 0}</p>
+        <div className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+            {figures.map(({ label, value, icon: Icon }) => (
+              <div key={label} className="panel p-6">
+                <Icon className="text-blue-600" size={20} />
+                <p className="mt-6 text-sm text-slate-500">{label}</p>
+                <p className="mt-2 text-3xl font-semibold">{value}</p>
+              </div>
+            ))}
+          </div>
+          <section className="panel p-5 sm:p-7">
+            <h2 className="text-lg font-semibold text-slate-950">
+              Platform metrics
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Current totals across the platform.
+            </p>
+            <div
+              className="mt-8"
+              role="img"
+              aria-label={figures
+                .map(({ label, value }) => `${label}: ${value}`)
+                .join(", ")}
+            >
+              <div className="grid grid-cols-[2rem_minmax(0,1fr)] gap-3">
+                <div className="flex h-64 flex-col justify-between text-right text-xs text-slate-400">
+                  <span>{chartMax}</span>
+                  <span>{chartMax / 2}</span>
+                  <span>0</span>
+                </div>
+                <div className="relative h-64 border-b border-slate-200">
+                  <div className="pointer-events-none absolute inset-0 flex flex-col justify-between">
+                    <span className="border-t border-dashed border-slate-200" />
+                    <span className="border-t border-dashed border-slate-200" />
+                    <span />
+                  </div>
+                  <div className="absolute inset-0 grid grid-cols-5 items-end gap-2 px-2 sm:gap-5 sm:px-5">
+                    {figures.map(({ label, value, color }) => (
+                      <div
+                        key={label}
+                        className="flex h-full items-end justify-center"
+                      >
+                        <div
+                          className={`relative w-full max-w-24 rounded-t-lg ${color}`}
+                          style={{
+                            height: value ? `${(value / chartMax) * 100}%` : 3,
+                          }}
+                        >
+                          <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 text-xs font-semibold text-slate-700">
+                            {value}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="ml-11 grid grid-cols-5 gap-2 px-2 pt-3 text-center text-[11px] text-slate-500 sm:gap-5 sm:px-5 sm:text-xs">
+                {figures.map(({ label }) => (
+                  <span key={label} className="min-w-0 break-words">
+                    {label}
+                  </span>
+                ))}
+              </div>
             </div>
-          ))}
+          </section>
         </div>
       )}
     </AdminGate>
