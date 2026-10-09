@@ -10,6 +10,10 @@ import type { ApiResponse, User } from "@/lib/task-management-types";
 
 type Context = { params: Promise<{ action: string }> };
 const demoAccounts = {
+  ADMIN: {
+    email: process.env.DEMO_ADMIN_EMAIL,
+    password: process.env.DEMO_ADMIN_PASSWORD,
+  },
   OWNER: {
     email: process.env.DEMO_OWNER_EMAIL,
     password: process.env.DEMO_OWNER_PASSWORD,
@@ -23,6 +27,14 @@ const demoAccounts = {
     password: process.env.DEMO_MEMBER_PASSWORD,
   },
 };
+function demoAvailable(role: keyof typeof demoAccounts) {
+  const account = demoAccounts[role];
+  return Boolean(
+    account.email &&
+      account.password &&
+      (role !== "MANAGER" || process.env.DEMO_MANAGER_ENABLED !== "false"),
+  );
+}
 function invalid(message: string, status = 400) {
   return NextResponse.json({ success: false, message }, { status });
 }
@@ -33,9 +45,9 @@ export async function GET(_request: NextRequest, context: Context) {
     return NextResponse.json({
       success: true,
       data: Object.fromEntries(
-        Object.entries(demoAccounts).map(([role, account]) => [
+        Object.entries(demoAccounts).map(([role]) => [
           role,
-          Boolean(account.email && account.password),
+          demoAvailable(role as keyof typeof demoAccounts),
         ]),
       ),
     });
@@ -78,14 +90,16 @@ export async function POST(request: NextRequest, context: Context) {
   let backendAction = action;
   if (action === "demo") {
     const role = body.role;
-    if (role !== "OWNER" && role !== "MANAGER" && role !== "MEMBER")
+    if (
+      role !== "ADMIN" &&
+      role !== "OWNER" &&
+      role !== "MANAGER" &&
+      role !== "MEMBER"
+    )
       return invalid("Unknown demo role");
     const account = demoAccounts[role];
-    if (!account.email || !account.password)
-      return invalid(
-        `${role.toLowerCase()} demo account is not configured`,
-        503,
-      );
+    if (!demoAvailable(role))
+      return invalid(`${role.toLowerCase()} demo account is not ready`, 503);
     body = { email: account.email, password: account.password };
     backendAction = "login";
   }

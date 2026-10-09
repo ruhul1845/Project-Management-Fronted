@@ -27,6 +27,8 @@ Live Backend URL        : https://project-management-saa-s-six.vercel.app
 Live Frontend URL       :
 API Documentation       :
 Demo Video              :
+Demo Admin Email        :
+Demo Admin Password     :
 Demo Owner Email        :
 Demo Owner Password     :
 Demo Manager Email      :

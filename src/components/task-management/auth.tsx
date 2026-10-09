@@ -6,6 +6,7 @@ import {
   Eye,
   EyeOff,
   LockKeyhole,
+  ShieldCheck,
   UserRound,
   Users,
 } from "lucide-react";
@@ -14,7 +15,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "@/components/ui/toast";
-import type { User } from "@/lib/task-management-types";
+import { api } from "@/lib/task-management-api";
+import type { Organization, User } from "@/lib/task-management-types";
 import { Brand, Spinner } from "./ui";
 
 const loginSchema = z.object({
@@ -143,7 +145,23 @@ export function LoginForm() {
   async function demo(role: string) {
     setPending(true);
     try {
-      finish(await submitAuth("demo", { role }));
+      const user = await submitAuth("demo", { role });
+      localStorage.removeItem("task-management-org");
+      if (role === "MANAGER" || role === "OWNER") {
+        try {
+          const organizations = (
+            await api<Organization[]>("organizations/mine")
+          ).data;
+          const workspace = organizations.find(
+            (organization) => organization.memberships?.[0]?.role === role,
+          );
+          if (workspace)
+            localStorage.setItem("task-management-org", workspace.id);
+        } catch {
+          // The workspace selector can still load after navigation.
+        }
+      }
+      finish(user);
     } catch (error) {
       toast.add({
         title: "Demo login unavailable",
@@ -280,8 +298,9 @@ export function LoginForm() {
           <h2 className="text-sm font-semibold">Quick demo login</h2>
           <span className="text-xs text-slate-400">Explore by role</span>
         </div>
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2">
           {[
+            { role: "ADMIN", icon: ShieldCheck, label: "Admin" },
             { role: "OWNER", icon: LockKeyhole, label: "Owner" },
             { role: "MANAGER", icon: Users, label: "Manager" },
             { role: "MEMBER", icon: UserRound, label: "Member" },

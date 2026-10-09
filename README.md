@@ -17,12 +17,14 @@ Open `http://localhost:3000`. The existing `.env` contains the deployed backend 
 |---|---|
 | `API_BASE_URL` | Server-only backend API base URL, e.g. `https://project-management-saa-s-six.vercel.app/api/v1` |
 | `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Google Web client ID for the browser sign-in button |
+| `DEMO_ADMIN_EMAIL`, `DEMO_ADMIN_PASSWORD` | Dedicated system admin demo account |
 | `DEMO_OWNER_EMAIL`, `DEMO_OWNER_PASSWORD` | Dedicated organization owner demo account |
 | `DEMO_MANAGER_EMAIL`, `DEMO_MANAGER_PASSWORD` | Dedicated organization manager demo account |
+| `DEMO_MANAGER_ENABLED` | Set to `false` while the configured account lacks a manager membership |
 | `DEMO_MEMBER_EMAIL`, `DEMO_MEMBER_PASSWORD` | Dedicated organization member demo account |
 | `SUPPORT_EMAIL` | Optional public support email shown on Contact |
 
-Demo credentials are read only by the Next.js server. Their buttons become available when both email and password are set. The backend seed example only creates an owner and a system admin; add a registered manager and member to the demo organization before enabling all three role buttons. Use dedicated demo credentials rather than personal accounts.
+Demo credentials are read only by the Next.js server. Their buttons become available when both email and password are set. The backend seed example creates an owner and a system admin; add registered manager and member accounts before enabling their role buttons. Use dedicated demo credentials rather than personal accounts.
 
 For Google sign-in, add `http://localhost:3000` and the deployed frontend origin to the Google client's **Authorized JavaScript origins**. The popup callback flow does not use an Authorized redirect URI. The backend must use the same value in `GOOGLE_CLIENT_ID`.
 
