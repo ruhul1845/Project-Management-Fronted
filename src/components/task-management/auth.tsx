@@ -6,7 +6,6 @@ import {
   Eye,
   EyeOff,
   LockKeyhole,
-  ShieldCheck,
   UserRound,
   Users,
 } from "lucide-react";
@@ -71,37 +70,26 @@ export function AuthFrame({
           {mode === "login" ? "Welcome back" : "A clearer way to work"}
         </p>
       </div>
-      <div className="relative hidden overflow-hidden bg-[#f4f7ff] p-16 lg:flex lg:flex-col lg:justify-center">
-        <div className="absolute -right-30 -top-30 size-96 rounded-full bg-blue-200/60 blur-3xl" />
-        <div className="relative mx-auto w-full max-w-lg">
-          <span className="eyebrow">Thoughtful work, together</span>
+      <div
+        className="hidden bg-[#a0ddfc] px-12 pb-16 pt-20 lg:flex lg:flex-col xl:px-16 xl:pt-24"
+        style={{
+          backgroundImage: "url('/img/bg.png')",
+          backgroundPosition: "center bottom",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "100% auto",
+        }}
+      >
+        <div className="mx-auto w-full max-w-lg">
+          <span className="text-xs font-bold uppercase tracking-[.2em] text-blue-800">
+            Thoughtful work, together
+          </span>
           <h2 className="mt-5 text-5xl font-semibold leading-[1.13] tracking-tight text-slate-950">
             Give every good idea room to become great work.
           </h2>
-          <p className="mt-5 max-w-md leading-7 text-slate-600">
+          <p className="mt-5 max-w-md leading-7 text-slate-800">
             Bring your projects, tasks, and people into one beautiful, focused
             workspace.
           </p>
-          <div className="soft-shadow mt-12 rounded-3xl border border-white bg-white p-7">
-            <div className="flex items-center gap-4">
-              <ShieldCheck size={26} className="text-blue-600" />
-              <div>
-                <p className="font-semibold">Plan with confidence</p>
-                <p className="text-sm text-slate-500">
-                  Clear steps. Shared progress. Better outcomes.
-                </p>
-              </div>
-            </div>
-            <div className="mt-6 h-2 rounded-full bg-slate-100">
-              <div className="h-full w-[72%] rounded-full bg-blue-600" />
-            </div>
-            <div className="mt-4 flex justify-between text-xs text-slate-500">
-              <span>Project momentum</span>
-              <span className="font-semibold text-blue-600">
-                Moving forward
-              </span>
-            </div>
-          </div>
         </div>
       </div>
     </div>
