@@ -54,3 +54,5 @@ npx tsc --noEmit
 npm run build
 npm run lint
 ```
+
+The [walkthrough plan](VIDEO_WALKTHROUGH.md) maps the main screens to the B7A7 video and submission checklist.
