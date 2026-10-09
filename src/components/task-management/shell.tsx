@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Plus,
   Search,
   Settings2,
   Shield,
@@ -198,6 +199,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-3 top-3.5 size-4 text-slate-400" />
               </div>
+              <Link
+                href="/workspaces/new"
+                onClick={() => setMobileOpen(false)}
+                className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700"
+              >
+                <Plus size={16} /> New workspace
+              </Link>
             </div>
           )}
           <nav className="mt-8 flex-1 space-y-1" aria-label="Main navigation">

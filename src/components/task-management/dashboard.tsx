@@ -10,10 +10,16 @@ import {
   UsersRound,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
 import { api, json, qs } from "@/lib/task-management-api";
-import type { Analytics, Project, Task } from "@/lib/task-management-types";
+import type {
+  Analytics,
+  Organization,
+  Project,
+  Task,
+} from "@/lib/task-management-types";
 import { useAction } from "./hooks";
 import { useWorkspace } from "./shell";
 import {
@@ -26,8 +32,10 @@ import {
   StatusPill,
 } from "./ui";
 
-function CreateWorkspace() {
+export function CreateWorkspace() {
   const client = useQueryClient();
+  const router = useRouter();
+  const { organizations, setOrganizationId } = useWorkspace();
   const act = useAction();
   const [step, setStep] = useState(1);
   const [message, setMessage] = useState("");
@@ -40,22 +48,42 @@ function CreateWorkspace() {
       }),
     },
     onSubmit: async ({ value }) => {
+      let createdId = "";
       const ok = await act(
-        () => api("organizations", json("POST", value)),
+        async () => {
+          createdId = (
+            await api<Organization>("organizations", json("POST", value))
+          ).data.id;
+        },
         "Workspace created",
+        [["organizations", "mine"]],
       );
-      if (ok) client.invalidateQueries({ queryKey: ["organizations", "mine"] });
+      if (ok && createdId) {
+        setOrganizationId(createdId);
+        client.invalidateQueries({ queryKey: ["me"] });
+        router.replace("/workspace");
+      }
     },
   });
   return (
     <div className="mx-auto max-w-2xl py-10">
       <p className="eyebrow">Getting started · Step {step} of 2</p>
       <h1 className="mt-3 text-4xl font-semibold tracking-tight">
-        Make a home for your work.
+        {organizations.length
+          ? "Create a new workspace."
+          : "Make a home for your work."}
       </h1>
       <p className="mt-4 text-slate-500">
         Create an organization to bring your projects and teammates together.
       </p>
+      {organizations.length > 0 && (
+        <Link
+          href="/workspace"
+          className="mt-4 inline-block text-sm font-semibold text-blue-600"
+        >
+          Back to overview
+        </Link>
+      )}
       <div className="panel mt-9 p-7 md:p-9">
         <div className="mb-8 flex gap-2">
           <span
