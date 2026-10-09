@@ -12,8 +12,13 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { api, json, messageOf } from "@/lib/task-management-api";
-import type { Label, Organization, User } from "@/lib/task-management-types";
+import { api, json, messageOf, qs } from "@/lib/task-management-api";
+import type {
+  Label,
+  Organization,
+  Team,
+  User,
+} from "@/lib/task-management-types";
 import { useAction } from "./hooks";
 import { useWorkspace } from "./shell";
 import { EmptyState, ErrorState, LoadingBlock, PageHeading, Pill } from "./ui";
@@ -157,8 +162,16 @@ export function PaymentReturn({ cancelled = false }: { cancelled?: boolean }) {
   );
 }
 export function Settings() {
-  const { user, organization, isOwner } = useWorkspace();
+  const { user, organization, role, isOwner } = useWorkspace();
   const act = useAction();
+  const teams = useQuery({
+    queryKey: ["profile-team-roles", organization?.id],
+    queryFn: async () =>
+      (await api<Team[]>(`teams?${qs({ organizationId: organization?.id })}`))
+        .data,
+    enabled: Boolean(organization),
+  });
+  const myTeams = teams.data?.filter((team) => team.members?.[0]?.role) ?? [];
   const profile = useForm({
     defaultValues: { name: user.name, avatarUrl: user.avatarUrl ?? "" },
     validators: {
@@ -301,6 +314,70 @@ export function Settings() {
               Save profile
             </button>
           </form>
+          <div className="mt-7 border-t border-slate-100 pt-6">
+            <h3 className="text-sm font-semibold">Your roles</h3>
+            <p className="mt-1 text-xs text-slate-500">
+              Roles depend on the workspace and team you are working in.
+            </p>
+            {organization ? (
+              <div className="mt-4 space-y-3">
+                <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 px-4 py-3">
+                  <span className="min-w-0">
+                    <span className="block text-xs text-slate-500">
+                      Workspace
+                    </span>
+                    <span className="block truncate text-sm font-medium">
+                      {organization.name}
+                    </span>
+                  </span>
+                  <Pill
+                    tone={
+                      role === "OWNER" || role === "MANAGER" ? "blue" : "slate"
+                    }
+                  >
+                    {role ?? "No role"}
+                  </Pill>
+                </div>
+                {teams.isPending ? (
+                  <p className="text-xs text-slate-500">Loading team roles…</p>
+                ) : teams.isError ? (
+                  <p className="text-xs text-rose-600">
+                    Could not load your team roles.
+                  </p>
+                ) : myTeams.length ? (
+                  <ul className="space-y-2">
+                    {myTeams.map((team) => (
+                      <li
+                        key={team.id}
+                        className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 px-4 py-3"
+                      >
+                        <span className="min-w-0 truncate text-sm font-medium">
+                          {team.name}
+                        </span>
+                        <Pill
+                          tone={
+                            team.members?.[0]?.role === "LEAD"
+                              ? "blue"
+                              : "slate"
+                          }
+                        >
+                          {team.members?.[0]?.role ?? "MEMBER"}
+                        </Pill>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs text-slate-500">
+                    You do not belong to a team in this workspace.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p className="mt-4 text-xs text-slate-500">
+                Join or create a workspace to see your roles.
+              </p>
+            )}
+          </div>
         </section>
         {isOwner && organization && (
           <section className="panel p-7">

@@ -250,6 +250,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 <span className="block truncate text-xs text-slate-500">
                   {user.email}
                 </span>
+                {role && organization && (
+                  <span className="block truncate text-xs font-medium text-blue-600">
+                    {role.charAt(0) + role.slice(1).toLowerCase()} in{" "}
+                    {organization.name}
+                  </span>
+                )}
               </span>
             </Link>
             <button
