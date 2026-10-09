@@ -1,7 +1,6 @@
 import {
   ArrowUpRight,
   CalendarDays,
-  Check,
   CheckCircle2,
   Layers3,
   MessageSquareText,
@@ -48,39 +47,30 @@ export default function Home() {
     <main>
       <section className="relative overflow-hidden border-b border-slate-100 bg-white">
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-right"
           style={{ backgroundImage: "url('/img/bg.png')" }}
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/70 to-white/20" />
-        <div className="relative mx-auto flex max-w-5xl flex-col items-center px-5 pb-24 pt-24 text-center md:px-8 lg:pb-32 lg:pt-32">
-          <h1 className="max-w-4xl text-[clamp(3.1rem,6vw,5.5rem)] font-semibold leading-[1.07] tracking-[-.065em] text-slate-950">
-            Great work starts with{" "}
-            <span className="text-blue-600">clear focus.</span>
-          </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-500">
-            Give every project a home, every task a next step, and every
-            teammate the context to move forward.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
-            <PrimaryLink href="/register">Start your workspace</PrimaryLink>
-            <Link
-              href="/features"
-              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold text-slate-700 hover:text-blue-600"
-            >
-              Explore features <ArrowUpRight size={16} />
-            </Link>
-          </div>
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-slate-500">
-            <span className="inline-flex items-center gap-2">
-              <Check size={15} className="text-emerald-600" /> Clear priorities
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <Check size={15} className="text-emerald-600" /> Connected teams
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <Check size={15} className="text-emerald-600" /> Less noise
-            </span>
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/70 to-white/10" />
+        <div className="relative mx-auto flex min-h-[640px] max-w-7xl items-center px-5 py-20 md:px-8">
+          <div className="w-full max-w-[600px]">
+            <h1 className="text-[clamp(3.1rem,5vw,5.5rem)] font-semibold leading-[1.07] tracking-[-.065em] text-slate-950">
+              Great work starts with{" "}
+              <span className="text-blue-600">clear focus.</span>
+            </h1>
+            <p className="mt-7 max-w-lg text-lg leading-8 text-slate-600">
+              Give every project a home, every task a next step, and every
+              teammate the context to move forward.
+            </p>
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              <PrimaryLink href="/register">Start your workspace</PrimaryLink>
+              <Link
+                href="/features"
+                className="inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold text-slate-700 hover:text-blue-600"
+              >
+                Explore features <ArrowUpRight size={16} />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
