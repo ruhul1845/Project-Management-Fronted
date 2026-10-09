@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <rect width="64" height="64" rx="14" fill="white"/>
-  <path d="M20 11h-8a6 6 0 0 0-6 6v38a6 6 0 0 0 6 6h40a6 6 0 0 0 6-6V17a6 6 0 0 0-6-6h-8" stroke="#171c26" stroke-width="5" stroke-linejoin="round"/>
-  <path d="M24 6h16a4 4 0 0 1 4 4v7H20v-7a4 4 0 0 1 4-4Z" fill="white" stroke="#171c26" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M22 11h-3a6 6 0 0 0-6 6v38a6 6 0 0 0 6 6h26a6 6 0 0 0 6-6V17a6 6 0 0 0-6-6h-3" stroke="#171c26" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M26 6h12a4 4 0 0 1 4 4v7H22v-7a4 4 0 0 1 4-4Z" fill="white" stroke="#171c26" stroke-width="5" stroke-linejoin="round"/>
   <circle cx="32" cy="11" r="2" fill="#171c26"/>
   <g stroke="#171c26" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="13" y="24" width="8" height="8" rx="1.5" stroke-width="2.5"/>
-    <path d="m15 28 3 3 5-6M28 28h21" stroke-width="3"/>
-    <rect x="13" y="36" width="8" height="8" rx="1.5" stroke-width="2.5"/>
-    <path d="m15 40 3 3 5-6M28 40h21" stroke-width="3"/>
-    <rect x="13" y="48" width="8" height="8" rx="1.5" stroke-width="2.5"/>
-    <path d="m15 52 3 3 5-6M28 52h21" stroke-width="3"/>
+    <rect x="19" y="24" width="7" height="8" rx="1.5" stroke-width="2.5"/>
+    <path d="m21 28 2.5 3 4-6M32 28h12" stroke-width="3"/>
+    <rect x="19" y="36" width="7" height="8" rx="1.5" stroke-width="2.5"/>
+    <path d="m21 40 2.5 3 4-6M32 40h12" stroke-width="3"/>
+    <rect x="19" y="48" width="7" height="8" rx="1.5" stroke-width="2.5"/>
+    <path d="m21 52 2.5 3 4-6M32 52h12" stroke-width="3"/>
   </g>
 </svg>
