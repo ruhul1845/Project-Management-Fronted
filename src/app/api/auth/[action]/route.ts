@@ -53,6 +53,9 @@ export async function GET(_request: NextRequest, context: Context) {
 }
 
 export async function POST(request: NextRequest, context: Context) {
+  const origin = request.headers.get("origin");
+  if (origin && origin !== request.nextUrl.origin)
+    return invalid("Origin not allowed", 403);
   const { action } = await context.params;
   if (action === "logout") {
     try {

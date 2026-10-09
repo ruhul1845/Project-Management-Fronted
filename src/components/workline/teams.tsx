@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Suspense, useState } from "react";
 import { z } from "zod";
 import { api, json, messageOf, qs } from "@/lib/workline-api";
-import type { Member, OrgRole, Team } from "@/lib/workline-types";
+import type { Member, Team } from "@/lib/workline-types";
 import { useAction, useUrlState } from "./hooks";
 import { useWorkspace } from "./shell";
 import {
@@ -202,8 +202,23 @@ export function Teams() {
 export function TeamDetail({ id }: { id: string }) {
   const { canManage, user } = useWorkspace();
   const act = useAction();
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState("MEMBER");
+  const memberForm = useForm({
+    defaultValues: { email: "", role: "MEMBER" },
+    validators: {
+      onSubmit: z.object({
+        email: z.email(),
+        role: z.enum(["LEAD", "MEMBER", "VIEWER"]),
+      }),
+    },
+    onSubmit: async ({ value }) => {
+      const ok = await act(
+        () => api(`teams/${id}/members`, json("POST", value)),
+        "Member added",
+        [["team", id]],
+      );
+      if (ok) memberForm.reset();
+    },
+  });
   const team = useQuery({
     queryKey: ["team", id],
     queryFn: async () => (await api<Team>(`teams/${id}`)).data,
@@ -286,38 +301,46 @@ export function TeamDetail({ id }: { id: string }) {
           </div>
           {canEdit && (
             <form
-              onSubmit={async (e) => {
+              onSubmit={(e) => {
                 e.preventDefault();
-                if (!z.email().safeParse(email).success) return;
-                const ok = await act(
-                  () =>
-                    api(`teams/${id}/members`, json("POST", { email, role })),
-                  "Member added",
-                  [["team", id]],
-                );
-                if (ok) setEmail("");
+                memberForm.handleSubmit();
               }}
               className="mt-6 grid gap-3 border-t pt-5 sm:grid-cols-[1fr_auto_auto]"
             >
-              <input
-                className="field"
-                aria-label="Member email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Registered user's email"
-              />
-              <select
-                className="field w-auto"
-                aria-label="Team role"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-              >
-                <option value="LEAD">Lead</option>
-                <option value="MEMBER">Member</option>
-                <option value="VIEWER">Viewer</option>
-              </select>
+              <memberForm.Field name="email">
+                {(field) => (
+                  <div>
+                    <input
+                      className="field"
+                      aria-label="Member email"
+                      type="email"
+                      required
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Registered user's email"
+                    />
+                    {field.state.meta.errors.length > 0 && (
+                      <p className="mt-1 text-xs text-rose-600">
+                        Enter a valid email.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </memberForm.Field>
+              <memberForm.Field name="role">
+                {(field) => (
+                  <select
+                    className="field w-auto"
+                    aria-label="Team role"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  >
+                    <option value="LEAD">Lead</option>
+                    <option value="MEMBER">Member</option>
+                    <option value="VIEWER">Viewer</option>
+                  </select>
+                )}
+              </memberForm.Field>
               <button
                 type="submit"
                 className="rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white"
@@ -356,8 +379,27 @@ export function Members() {
   const act = useAction();
   const [search, setSearch] = useState(url.get("search"));
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState<OrgRole>("MEMBER");
+  const memberForm = useForm({
+    defaultValues: { email: "", role: "MEMBER" },
+    validators: {
+      onSubmit: z.object({
+        email: z.email(),
+        role: z.enum(["MANAGER", "MEMBER", "GUEST"]),
+      }),
+    },
+    onSubmit: async ({ value }) => {
+      const ok = await act(
+        () =>
+          api(`organizations/${organization?.id}/members`, json("POST", value)),
+        "Member added",
+        [["members", organization?.id ?? ""]],
+      );
+      if (ok) {
+        memberForm.reset();
+        setOpen(false);
+      }
+    },
+  });
   const page = Math.max(1, Number(url.get("page")) || 1);
   const members = useQuery({
     queryKey: ["members", organization?.id, page, url.get("search")],
@@ -389,22 +431,9 @@ export function Members() {
       />
       {open && (
         <form
-          onSubmit={async (e) => {
+          onSubmit={(e) => {
             e.preventDefault();
-            if (!z.email().safeParse(email).success) return;
-            const ok = await act(
-              () =>
-                api(
-                  `organizations/${organization?.id}/members`,
-                  json("POST", { email, role }),
-                ),
-              "Member added",
-              [["members", organization?.id ?? ""]],
-            );
-            if (ok) {
-              setEmail("");
-              setOpen(false);
-            }
+            memberForm.handleSubmit();
           }}
           className="panel mb-6 grid gap-4 p-6 sm:grid-cols-[1fr_auto_auto]"
         >
@@ -412,30 +441,45 @@ export function Members() {
             <label className="field-label" htmlFor="member-email">
               Registered user email
             </label>
-            <input
-              id="member-email"
-              type="email"
-              required
-              className="field"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="colleague@example.com"
-            />
+            <memberForm.Field name="email">
+              {(field) => (
+                <>
+                  <input
+                    id="member-email"
+                    type="email"
+                    required
+                    className="field"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="colleague@example.com"
+                  />
+                  {field.state.meta.errors.length > 0 && (
+                    <p className="mt-1 text-xs text-rose-600">
+                      Enter a valid email.
+                    </p>
+                  )}
+                </>
+              )}
+            </memberForm.Field>
           </div>
           <div>
             <label className="field-label" htmlFor="member-role">
               Role
             </label>
-            <select
-              id="member-role"
-              className="field"
-              value={role}
-              onChange={(e) => setRole(e.target.value as OrgRole)}
-            >
-              <option value="MANAGER">Manager</option>
-              <option value="MEMBER">Member</option>
-              <option value="GUEST">Guest</option>
-            </select>
+            <memberForm.Field name="role">
+              {(field) => (
+                <select
+                  id="member-role"
+                  className="field"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                >
+                  <option value="MANAGER">Manager</option>
+                  <option value="MEMBER">Member</option>
+                  <option value="GUEST">Guest</option>
+                </select>
+              )}
+            </memberForm.Field>
           </div>
           <button
             type="submit"
