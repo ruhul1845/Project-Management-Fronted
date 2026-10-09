@@ -70,7 +70,9 @@ export function Billing() {
       <div className="grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
         <div className="panel p-7">
           <CreditCard size={28} className="text-blue-600" />
-          <h2 className="mt-6 text-2xl font-semibold">Task Management Pro</h2>
+          <h2 className="mt-6 text-2xl font-semibold">
+            Project Management Pro
+          </h2>
           <p className="mt-3 leading-7 text-slate-500">
             Upgrade your selected organization using the backend&apos;s Stripe
             test checkout. You&apos;ll return here after payment.
@@ -150,7 +152,7 @@ export function PaymentReturn({ cancelled = false }: { cancelled?: boolean }) {
           ? "No plan change was confirmed. You can return to billing when you're ready."
           : active
             ? "Stripe confirmed your payment and your workspace plan is now active."
-            : "Stripe returned you to Task Management. Your workspace will update after the payment webhook is confirmed."}
+            : "Stripe returned you to Project Management. Your workspace will update after the payment webhook is confirmed."}
       </p>
       <Link
         href="/billing"
@@ -261,7 +263,7 @@ export function Settings() {
         <section className="panel p-7">
           <h2 className="text-lg font-semibold">Your profile</h2>
           <p className="mt-1 text-sm text-slate-500">
-            The details teammates see across Task Management.
+            The details teammates see across Project Management.
           </p>
           <form
             onSubmit={(e) => {

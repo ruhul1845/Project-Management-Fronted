@@ -68,7 +68,7 @@ export function AuthFrame({
           {children}
         </div>
         <p className="text-xs text-slate-400">
-          © {new Date().getFullYear()} Task Management ·{" "}
+          © {new Date().getFullYear()} Project Management ·{" "}
           {mode === "login" ? "Welcome back" : "A clearer way to work"}
         </p>
       </div>
@@ -353,7 +353,7 @@ export function RegisterForm() {
         await submitAuth("register", value);
         toast.add({
           title: "Account created",
-          description: "Welcome to Task Management",
+          description: "Welcome to Project Management",
           type: "success",
         });
         router.push("/workspace");

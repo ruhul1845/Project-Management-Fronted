@@ -1,4 +1,5 @@
 import { ArrowRight, Inbox, LoaderCircle } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Priority, TaskStatus } from "@/lib/task-management-types";
 
@@ -6,58 +7,19 @@ export function Brand({ compact = false }: { compact?: boolean }) {
   return (
     <Link
       href="/"
-      className="inline-flex items-center gap-2.5 font-semibold tracking-tight text-slate-900"
+      className="inline-flex items-center gap-2 font-semibold tracking-tight text-slate-900"
     >
-      <svg
-        viewBox="0 0 40 48"
-        fill="none"
-        className="h-10 w-8 shrink-0 text-slate-900"
-        aria-hidden="true"
-      >
-        <path
-          d="M14 8h-3a5 5 0 0 0-5 5v27a5 5 0 0 0 5 5h18a5 5 0 0 0 5-5V13a5 5 0 0 0-5-5h-3"
-          stroke="currentColor"
-          strokeWidth="3.4"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M17 4h6a3 3 0 0 1 3 3v5H14V7a3 3 0 0 1 3-3Z"
-          fill="white"
-          stroke="currentColor"
-          strokeWidth="3.4"
-          strokeLinejoin="round"
-        />
-        <circle cx="20" cy="8" r="1.6" fill="currentColor" />
-        {[19, 28, 37].map((y) => (
-          <g key={y}>
-            <rect
-              x="11"
-              y={y - 3}
-              width="5"
-              height="6"
-              rx="1.1"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-            <path
-              d={`m12 ${y} 1.5 2 3.5-4`}
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d={`M21 ${y}h9`}
-              stroke="currentColor"
-              strokeWidth="2.8"
-              strokeLinecap="round"
-            />
-          </g>
-        ))}
-      </svg>
+      <Image
+        src="/img/project-management-logo.png"
+        alt=""
+        width={40}
+        height={40}
+        className="size-9 shrink-0 object-contain"
+        priority
+      />
       {!compact && (
-        <span className="text-lg">
-          Task Management<span className="text-blue-600">.</span>
+        <span className="whitespace-nowrap text-base">
+          Project Management<span className="text-blue-600">.</span>
         </span>
       )}
     </Link>

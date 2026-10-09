@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Explore Task Management plans and start Stripe checkout from your workspace.",
+    "Explore Project Management plans and start Stripe checkout from your workspace.",
 };
 export default function Pricing() {
   return (

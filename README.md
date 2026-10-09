@@ -1,4 +1,4 @@
-# Task Management Frontend
+# Project Management Frontend
 
 A responsive Next.js App Router frontend for the Project Management SaaS API in `../Project-Management-SaaS`. This project was created in its own folder using the `PH-Healthcare-Nextjs` starter's route, provider, and UI component structure.
 

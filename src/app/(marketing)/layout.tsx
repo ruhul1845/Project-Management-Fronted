@@ -71,7 +71,7 @@ export default function MarketingLayout({
           </div>
         </div>
         <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-2 border-t border-slate-200 px-5 py-5 text-xs text-slate-400 md:px-8">
-          <span>© {new Date().getFullYear()} Task Management</span>
+          <span>© {new Date().getFullYear()} Project Management</span>
           <span>Built for focused teams.</span>
         </div>
       </footer>

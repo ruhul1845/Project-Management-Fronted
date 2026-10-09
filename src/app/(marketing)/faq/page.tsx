@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "FAQ",
-  description: "Answers to common questions about Task Management.",
+  description: "Answers to common questions about Project Management.",
 };
 const answers = [
   {

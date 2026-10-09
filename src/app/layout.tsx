@@ -5,13 +5,13 @@ import Providers from "@/providers";
 
 export const metadata: Metadata = {
   title: {
-    default: "Task Management — Work in focus",
-    template: "%s | Task Management",
+    default: "Project Management — Work in focus",
+    template: "%s | Project Management",
   },
   description:
     "A calm workspace for projects, teams, and the work that moves them forward.",
   openGraph: {
-    title: "Task Management",
+    title: "Project Management",
     description: "Make space for your best work.",
     type: "website",
   },
