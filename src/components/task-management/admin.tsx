@@ -108,9 +108,9 @@ export function AdminUsers() {
           }}
           className="relative flex-1 sm:max-w-sm"
         >
-          <Search className="absolute left-3 top-3 size-4 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
           <input
-            className="field pl-9"
+            className="field field-search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             aria-label="Search users"
@@ -258,9 +258,9 @@ export function AdminOrganizations() {
         }}
         className="relative mb-5 max-w-sm"
       >
-        <Search className="absolute left-3 top-3 size-4 text-slate-400" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
         <input
-          className="field pl-9"
+          className="field field-search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           aria-label="Search organizations"

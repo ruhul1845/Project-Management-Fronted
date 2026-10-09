@@ -146,11 +146,11 @@ export function Teams() {
         }}
         className="relative mb-5 max-w-sm"
       >
-        <Search className="absolute left-3 top-3 size-4 text-slate-400" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="field pl-9"
+          className="field field-search"
           aria-label="Search teams"
           placeholder="Search teams"
         />
@@ -494,11 +494,14 @@ export function Members() {
         }}
         className="relative mb-5 max-w-sm"
       >
-        <Search size={16} className="absolute left-3 top-3 text-slate-400" />
+        <Search
+          size={16}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+        />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="field pl-9"
+          className="field field-search"
           aria-label="Search members"
           placeholder="Search members"
         />

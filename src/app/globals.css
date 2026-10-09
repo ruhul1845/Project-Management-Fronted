@@ -56,6 +56,9 @@ button:not(:disabled),
 .field {
   @apply h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100;
 }
+.field.field-search {
+  padding-left: 2.5rem;
+}
 .field-label {
   @apply mb-1.5 block text-sm font-medium text-slate-700;
 }

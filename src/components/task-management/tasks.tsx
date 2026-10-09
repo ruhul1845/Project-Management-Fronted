@@ -322,10 +322,13 @@ export function ProjectTasks({ projectId }: { projectId: string }) {
           }}
           className="relative flex-1 sm:max-w-xs"
         >
-          <Search size={16} className="absolute left-3 top-3 text-slate-400" />
+          <Search
+            size={16}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+          />
           <input
             aria-label="Search tasks"
-            className="field pl-9"
+            className="field field-search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search tasks"
