@@ -1,4 +1,4 @@
-import { Board } from "@/components/workline/tasks";
+import { Board } from "@/components/task-management/tasks";
 export default async function Page({
   params,
 }: {

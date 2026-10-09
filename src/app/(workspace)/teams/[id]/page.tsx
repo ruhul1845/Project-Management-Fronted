@@ -1,4 +1,4 @@
-import { TeamDetail } from "@/components/workline/teams";
+import { TeamDetail } from "@/components/task-management/teams";
 export default async function Page({
   params,
 }: {

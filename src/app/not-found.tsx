@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Brand } from "@/components/workline/ui";
+import { Brand } from "@/components/task-management/ui";
 export default function NotFound() {
   return (
     <div className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center px-6 text-center">

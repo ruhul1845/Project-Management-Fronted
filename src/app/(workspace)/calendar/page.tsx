@@ -1,4 +1,4 @@
-import { CalendarPage } from "@/components/workline/insights";
+import { CalendarPage } from "@/components/task-management/insights";
 export default function Page() {
   return <CalendarPage />;
 }

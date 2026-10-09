@@ -3,14 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight, Bell, CheckCheck, Clock3 } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { api, json, messageOf, qs } from "@/lib/workline-api";
+import { api, json, messageOf, qs } from "@/lib/task-management-api";
 import type {
   Analytics,
   AuditLog,
   CalendarData,
   Notification,
   TaskStatus,
-} from "@/lib/workline-types";
+} from "@/lib/task-management-types";
 import { useAction, useUrlState } from "./hooks";
 import { useWorkspace } from "./shell";
 import {

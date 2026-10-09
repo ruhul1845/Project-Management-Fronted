@@ -5,8 +5,8 @@ import { ArrowLeft, Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
-import { api, json, messageOf, qs } from "@/lib/workline-api";
-import type { Sprint } from "@/lib/workline-types";
+import { api, json, messageOf, qs } from "@/lib/task-management-api";
+import type { Sprint } from "@/lib/task-management-types";
 import { useAction } from "./hooks";
 import { useWorkspace } from "./shell";
 import {

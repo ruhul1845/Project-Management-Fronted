@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { AuthFrame, LoginForm } from "@/components/workline/auth";
+import { AuthFrame, LoginForm } from "@/components/task-management/auth";
 export const metadata: Metadata = {
   title: "Sign in",
-  description: "Sign in to your Workline workspace.",
+  description: "Sign in to your Task Management workspace.",
 };
 export default function LoginPage() {
   return (

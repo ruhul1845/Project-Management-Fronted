@@ -1,4 +1,4 @@
-import Sprints from "@/components/workline/sprints";
+import Sprints from "@/components/task-management/sprints";
 export default async function Page({
   params,
 }: {

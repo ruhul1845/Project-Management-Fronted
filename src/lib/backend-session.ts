@@ -1,7 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import type { NextResponse } from "next/server";
-import type { ApiResponse, User } from "./workline-types";
+import type { ApiResponse, User } from "./task-management-types";
 
 export const backendBase = (
   process.env.API_BASE_URL ??

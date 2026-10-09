@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Find help and contact options for Workline.",
+  description: "Find help and contact options for Task Management.",
 };
 export default function Contact() {
   const supportEmail = process.env.SUPPORT_EMAIL;

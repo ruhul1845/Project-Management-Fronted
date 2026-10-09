@@ -12,8 +12,8 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
-import { api, json, qs } from "@/lib/workline-api";
-import type { Analytics, Project, Task } from "@/lib/workline-types";
+import { api, json, qs } from "@/lib/task-management-api";
+import type { Analytics, Project, Task } from "@/lib/task-management-types";
 import { useAction } from "./hooks";
 import { useWorkspace } from "./shell";
 import {

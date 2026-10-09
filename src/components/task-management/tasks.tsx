@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Suspense, useState } from "react";
 import { z } from "zod";
 import { toast } from "@/components/ui/toast";
-import { api, json, messageOf, qs } from "@/lib/workline-api";
+import { api, json, messageOf, qs } from "@/lib/task-management-api";
 import type {
   KanbanData,
   Label,
@@ -14,7 +14,7 @@ import type {
   Priority,
   Task,
   TaskStatus,
-} from "@/lib/workline-types";
+} from "@/lib/task-management-types";
 import { useAction, useUrlState } from "./hooks";
 import { useWorkspace } from "./shell";
 import {

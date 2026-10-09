@@ -12,8 +12,8 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { api, json, messageOf } from "@/lib/workline-api";
-import type { Label, Organization, User } from "@/lib/workline-types";
+import { api, json, messageOf } from "@/lib/task-management-api";
+import type { Label, Organization, User } from "@/lib/task-management-types";
 import { useAction } from "./hooks";
 import { useWorkspace } from "./shell";
 import { EmptyState, ErrorState, LoadingBlock, PageHeading, Pill } from "./ui";
@@ -67,7 +67,7 @@ export function Billing() {
           <span className="grid size-12 place-items-center rounded-2xl bg-blue-50 text-blue-600">
             <CreditCard size={23} />
           </span>
-          <h2 className="mt-6 text-2xl font-semibold">Workline Pro</h2>
+          <h2 className="mt-6 text-2xl font-semibold">Task Management Pro</h2>
           <p className="mt-3 leading-7 text-slate-500">
             Upgrade your selected organization using the backend&apos;s Stripe
             test checkout. You&apos;ll return here after payment.
@@ -147,7 +147,7 @@ export function PaymentReturn({ cancelled = false }: { cancelled?: boolean }) {
           ? "No plan change was confirmed. You can return to billing when you're ready."
           : active
             ? "Stripe confirmed your payment and your workspace plan is now active."
-            : "Stripe returned you to Workline. Your workspace will update after the payment webhook is confirmed."}
+            : "Stripe returned you to Task Management. Your workspace will update after the payment webhook is confirmed."}
       </p>
       <Link
         href="/billing"
@@ -250,7 +250,7 @@ export function Settings() {
         <section className="panel p-7">
           <h2 className="text-lg font-semibold">Your profile</h2>
           <p className="mt-1 text-sm text-slate-500">
-            The details teammates see across Workline.
+            The details teammates see across Task Management.
           </p>
           <form
             onSubmit={(e) => {

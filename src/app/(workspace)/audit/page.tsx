@@ -1,4 +1,4 @@
-import { AuditPage } from "@/components/workline/insights";
+import { AuditPage } from "@/components/task-management/insights";
 export default function Page() {
   return <AuditPage />;
 }

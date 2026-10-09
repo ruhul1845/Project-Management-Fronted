@@ -1,4 +1,4 @@
-import { ProjectOverview } from "@/components/workline/projects";
+import { ProjectOverview } from "@/components/task-management/projects";
 export default async function Page({
   params,
 }: {

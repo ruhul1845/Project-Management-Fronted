@@ -6,7 +6,7 @@ import {
   setSession,
   type TokenPair,
 } from "@/lib/backend-session";
-import type { ApiResponse, User } from "@/lib/workline-types";
+import type { ApiResponse, User } from "@/lib/task-management-types";
 
 type Context = { params: Promise<{ action: string }> };
 const demoAccounts = {

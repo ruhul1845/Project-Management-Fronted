@@ -3,18 +3,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 export const metadata: Metadata = {
   title: "About",
-  description: "Why Workline makes room for focused, connected work.",
+  description: "Why Task Management makes room for focused, connected work.",
 };
 export default function About() {
   return (
     <main className="mx-auto max-w-7xl px-5 py-20 md:px-8">
-      <p className="eyebrow">About workline</p>
+      <p className="eyebrow">About Task Management</p>
       <h1 className="mt-4 max-w-3xl text-5xl font-semibold tracking-tight md:text-6xl">
         Make space for the work that matters.
       </h1>
       <p className="mt-7 max-w-2xl text-xl leading-8 text-slate-500">
         Projects move best when people know what matters, who owns it, and what
-        comes next. Workline brings that clarity into one calm workspace.
+        comes next. Task Management brings that clarity into one calm workspace.
       </p>
       <div className="mt-16 grid gap-4 md:grid-cols-3">
         {[

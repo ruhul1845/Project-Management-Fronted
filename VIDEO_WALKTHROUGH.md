@@ -4,7 +4,7 @@ Record the deployed frontend with dedicated demo accounts. Keep the browser Netw
 
 | Time | Screen | What to show |
 |---|---|---|
-| 0:00–0:45 | Home, Features, Pricing | Introduce Workline's white and blue design, mobile navigation, and task management purpose. |
+| 0:00–0:45 | Home, Features, Pricing | Introduce Task Management's white and blue design, mobile navigation, and task management purpose. |
 | 0:45–1:40 | Login | Use the owner demo button. Explain the server-side session cookies and protected workspace routes. |
 | 1:40–2:35 | Workspace, Projects | Show live metrics, project creation, and the organization setup steps. |
 | 2:35–3:45 | Project board, task detail | Move a task, assign a member and label, add a comment, and upload an attachment. |
@@ -20,7 +20,7 @@ For the validation segment, submit a task or account form with a missing require
 ## Submission fields to fill after deployment
 
 ```text
-Project Name            : Workline — Project Management SaaS
+Project Name            : Task Management SaaS
 Backend Repo            :
 Frontend Repo           :
 Live Backend URL        : https://project-management-saa-s-six.vercel.app

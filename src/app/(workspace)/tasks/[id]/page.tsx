@@ -1,4 +1,4 @@
-import { TaskDetail } from "@/components/workline/tasks";
+import { TaskDetail } from "@/components/task-management/tasks";
 export default async function Page({
   params,
 }: {

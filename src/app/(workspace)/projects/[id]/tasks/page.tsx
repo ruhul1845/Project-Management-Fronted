@@ -1,4 +1,4 @@
-import { ProjectTasksPage } from "@/components/workline/tasks";
+import { ProjectTasksPage } from "@/components/task-management/tasks";
 export default async function Page({
   params,
 }: {

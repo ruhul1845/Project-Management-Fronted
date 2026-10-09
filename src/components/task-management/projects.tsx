@@ -14,8 +14,8 @@ import {
 import Link from "next/link";
 import { Suspense, useState } from "react";
 import { z } from "zod";
-import { api, json, qs } from "@/lib/workline-api";
-import type { Project, ProjectStatus, Team } from "@/lib/workline-types";
+import { api, json, qs } from "@/lib/task-management-api";
+import type { Project, ProjectStatus, Team } from "@/lib/task-management-types";
 import { useAction, useUrlState } from "./hooks";
 import { useWorkspace } from "./shell";
 import {

@@ -2,8 +2,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Building2, FolderKanban, Search, UsersRound } from "lucide-react";
 import { Suspense, useState } from "react";
-import { api, json, messageOf, qs } from "@/lib/workline-api";
-import type { Organization, User } from "@/lib/workline-types";
+import { api, json, messageOf, qs } from "@/lib/task-management-api";
+import type { Organization, User } from "@/lib/task-management-types";
 import { useAction, useUrlState } from "./hooks";
 import { useWorkspace } from "./shell";
 import {

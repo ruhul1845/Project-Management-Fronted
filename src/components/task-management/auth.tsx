@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "@/components/ui/toast";
-import type { User } from "@/lib/workline-types";
+import type { User } from "@/lib/task-management-types";
 import { Brand, Spinner } from "./ui";
 
 const loginSchema = z.object({
@@ -67,7 +67,7 @@ export function AuthFrame({
           {children}
         </div>
         <p className="text-xs text-slate-400">
-          © {new Date().getFullYear()} Workline ·{" "}
+          © {new Date().getFullYear()} Task Management ·{" "}
           {mode === "login" ? "Welcome back" : "A clearer way to work"}
         </p>
       </div>
@@ -348,7 +348,7 @@ export function RegisterForm() {
         await submitAuth("register", value);
         toast.add({
           title: "Account created",
-          description: "Welcome to Workline",
+          description: "Welcome to Task Management",
           type: "success",
         });
         router.push("/workspace");

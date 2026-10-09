@@ -21,8 +21,8 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { api } from "@/lib/workline-api";
-import type { Organization, OrgRole, User } from "@/lib/workline-types";
+import { api } from "@/lib/task-management-api";
+import type { Organization, OrgRole, User } from "@/lib/task-management-types";
 import { Brand, initials, LoadingBlock } from "./ui";
 
 type WorkspaceContext = {
@@ -49,7 +49,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   useEffect(() => {
-    setSelectedId(localStorage.getItem("workline-org"));
+    setSelectedId(localStorage.getItem("task-management-org"));
   }, []);
   const me = useQuery({
     queryKey: ["me"],
@@ -91,7 +91,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       canManage,
       isOwner,
       setOrganizationId: (id: string) => {
-        localStorage.setItem("workline-org", id);
+        localStorage.setItem("task-management-org", id);
         setSelectedId(id);
         queryClient.invalidateQueries();
       },

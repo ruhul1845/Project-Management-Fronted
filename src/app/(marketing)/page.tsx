@@ -12,7 +12,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import Link from "next/link";
-import { Pill, PrimaryLink } from "@/components/workline/ui";
+import { Pill, PrimaryLink } from "@/components/task-management/ui";
 
 const features = [
   {

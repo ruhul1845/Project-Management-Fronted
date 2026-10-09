@@ -1,4 +1,4 @@
-import { TeamsPage } from "@/components/workline/teams";
+import { TeamsPage } from "@/components/task-management/teams";
 export default function Page() {
   return <TeamsPage />;
 }

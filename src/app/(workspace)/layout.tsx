@@ -1,4 +1,4 @@
-import AppShell from "@/components/workline/shell";
+import AppShell from "@/components/task-management/shell";
 export default function WorkspaceLayout({
   children,
 }: {

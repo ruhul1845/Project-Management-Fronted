@@ -4,11 +4,14 @@ import { Toaster } from "@/components/ui/toast";
 import Providers from "@/providers";
 
 export const metadata: Metadata = {
-  title: { default: "Workline — Work in focus", template: "%s | Workline" },
+  title: {
+    default: "Task Management — Work in focus",
+    template: "%s | Task Management",
+  },
   description:
     "A calm workspace for projects, teams, and the work that moves them forward.",
   openGraph: {
-    title: "Workline",
+    title: "Task Management",
     description: "Make space for your best work.",
     type: "website",
   },

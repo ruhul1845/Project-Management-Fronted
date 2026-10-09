@@ -1,4 +1,4 @@
-# Workline — Project Management Frontend
+# Task Management Frontend
 
 A responsive Next.js App Router frontend for the Project Management SaaS API in `../Project-Management-SaaS`. This project was created in its own folder using the `PH-Healthcare-Nextjs` starter's route, provider, and UI component structure.
 
@@ -6,11 +6,10 @@ A responsive Next.js App Router frontend for the Project Management SaaS API in 
 
 ```bash
 npm install
-cp .env.example .env.local
 npm run dev
 ```
 
-Open `http://localhost:3000`. The supplied `.env.local` already contains the deployed backend URL and the Google Web client ID. `API_BASE_URL` must include `/api/v1`.
+Open `http://localhost:3000`. The existing `.env` contains the deployed backend URL and Google Web client ID. For a fresh setup, copy `.env.example` to `.env.local` and fill in the values. `API_BASE_URL` must include `/api/v1`.
 
 ## Frontend environment
 

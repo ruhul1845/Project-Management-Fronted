@@ -1,6 +1,6 @@
 import { ArrowRight, Inbox, LoaderCircle } from "lucide-react";
 import Link from "next/link";
-import type { Priority, TaskStatus } from "@/lib/workline-types";
+import type { Priority, TaskStatus } from "@/lib/task-management-types";
 
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
@@ -13,7 +13,7 @@ export function Brand({ compact = false }: { compact?: boolean }) {
       </span>
       {!compact && (
         <span className="text-lg">
-          workline<span className="text-blue-600">.</span>
+          Task Management<span className="text-blue-600">.</span>
         </span>
       )}
     </Link>

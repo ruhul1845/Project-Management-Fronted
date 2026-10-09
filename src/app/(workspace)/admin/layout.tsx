@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { backendBase, refreshSession } from "@/lib/backend-session";
-import type { ApiResponse, User } from "@/lib/workline-types";
+import type { ApiResponse, User } from "@/lib/task-management-types";
 export default async function AdminLayout({
   children,
 }: {
