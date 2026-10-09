@@ -162,9 +162,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="mt-5 flex items-center gap-3 rounded-2xl bg-blue-600 p-4 text-white">
-                <span className="grid size-9 place-items-center rounded-xl bg-white/20">
-                  <Bell size={17} />
-                </span>
+                <Bell size={20} className="shrink-0" />
                 <div>
                   <p className="text-sm font-semibold">
                     Everyone&apos;s on the same page
@@ -196,9 +194,7 @@ export default function Home() {
               key={title}
               className="rounded-2xl border border-slate-200 bg-white p-7 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/40"
             >
-              <span className="grid size-11 place-items-center rounded-xl bg-blue-50 text-blue-600">
-                <Icon size={21} />
-              </span>
+              <Icon size={25} className="text-blue-600" />
               <h3 className="mt-6 text-lg font-semibold tracking-tight">
                 {title}
               </h3>

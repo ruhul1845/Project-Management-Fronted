@@ -276,9 +276,7 @@ export default function Dashboard() {
           <div key={label} className="panel p-6">
             <div className="flex items-center justify-between">
               <span className="text-sm text-slate-500">{label}</span>
-              <span className="grid size-9 place-items-center rounded-xl bg-blue-50 text-blue-600">
-                <Icon size={18} />
-              </span>
+              <Icon size={21} className="text-blue-600" />
             </div>
             <p className="mt-4 text-3xl font-semibold tracking-tight">
               {value}
@@ -327,7 +325,7 @@ export default function Dashboard() {
                   href={`/projects/${project.id}`}
                   className="flex items-center gap-4 rounded-xl border border-slate-100 p-4 hover:border-blue-200 hover:bg-blue-50/40"
                 >
-                  <span className="grid size-10 place-items-center rounded-xl bg-blue-50 text-xs font-bold text-blue-600">
+                  <span className="text-xs font-bold tracking-wide text-blue-600">
                     {project.key.slice(0, 3)}
                   </span>
                   <span className="min-w-0 flex-1">

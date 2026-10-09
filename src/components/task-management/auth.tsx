@@ -84,9 +84,7 @@ export function AuthFrame({
           </p>
           <div className="soft-shadow mt-12 rounded-3xl border border-white bg-white p-7">
             <div className="flex items-center gap-4">
-              <div className="grid size-12 place-items-center rounded-2xl bg-blue-50 text-blue-600">
-                <ShieldCheck size={22} />
-              </div>
+              <ShieldCheck size={26} className="text-blue-600" />
               <div>
                 <p className="font-semibold">Plan with confidence</p>
                 <p className="text-sm text-slate-500">

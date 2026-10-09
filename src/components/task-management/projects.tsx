@@ -312,7 +312,7 @@ export function ProjectsContent() {
                 className="panel group p-6 transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-slate-200/40"
               >
                 <div className="flex items-start justify-between">
-                  <span className="grid size-11 place-items-center rounded-xl bg-blue-50 text-xs font-bold text-blue-700">
+                  <span className="text-xs font-bold tracking-wide text-blue-700">
                     {project.key.slice(0, 3)}
                   </span>
                   <StatusPill status={project.status} />

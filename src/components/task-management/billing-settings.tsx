@@ -64,9 +64,7 @@ export function Billing() {
       />
       <div className="grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
         <div className="panel p-7">
-          <span className="grid size-12 place-items-center rounded-2xl bg-blue-50 text-blue-600">
-            <CreditCard size={23} />
-          </span>
+          <CreditCard size={28} className="text-blue-600" />
           <h2 className="mt-6 text-2xl font-semibold">Task Management Pro</h2>
           <p className="mt-3 leading-7 text-slate-500">
             Upgrade your selected organization using the backend&apos;s Stripe
@@ -131,7 +129,7 @@ export function PaymentReturn({ cancelled = false }: { cancelled?: boolean }) {
   return (
     <div className="mx-auto max-w-xl py-14 text-center">
       <span
-        className={`mx-auto grid size-18 place-items-center rounded-3xl ${cancelled ? "bg-amber-50 text-amber-600" : active ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600"}`}
+        className={`mx-auto inline-flex ${cancelled ? "text-amber-600" : active ? "text-emerald-600" : "text-blue-600"}`}
       >
         {cancelled ? <XCircle size={32} /> : <CheckCircle2 size={32} />}
       </span>

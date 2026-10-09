@@ -175,9 +175,7 @@ export function Teams() {
               href={`/teams/${team.id}`}
               className="panel p-6 hover:border-blue-200"
             >
-              <span className="grid size-11 place-items-center rounded-xl bg-blue-50 text-blue-600">
-                <UsersRound size={20} />
-              </span>
+              <UsersRound size={24} className="text-blue-600" />
               <h2 className="mt-5 text-lg font-semibold">{team.name}</h2>
               <p className="mt-2 min-h-10 text-sm text-slate-500">
                 {team.description ||

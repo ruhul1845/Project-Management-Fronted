@@ -82,6 +82,7 @@ export interface Comment {
   content: string;
   createdAt: string;
   author: Pick<User, "id" | "name" | "avatarUrl">;
+  mentions?: { user: Pick<User, "id" | "name"> }[];
 }
 export interface Attachment {
   id: string;

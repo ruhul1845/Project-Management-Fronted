@@ -273,11 +273,10 @@ export function Notifications() {
         <div className="panel divide-y divide-slate-100">
           {list.data.data.map((note) => (
             <div key={note.id} className="flex gap-4 p-5">
-              <span
-                className={`grid size-10 shrink-0 place-items-center rounded-xl ${note.readAt ? "bg-slate-100 text-slate-500" : "bg-blue-50 text-blue-600"}`}
-              >
-                <Bell size={18} />
-              </span>
+              <Bell
+                size={20}
+                className={`shrink-0 ${note.readAt ? "text-slate-500" : "text-blue-600"}`}
+              />
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-2">
                   <h2 className="text-sm font-semibold">{note.title}</h2>
@@ -449,9 +448,7 @@ export function AuditView() {
         <div className="panel divide-y divide-slate-100">
           {data.data.data.map((log) => (
             <div key={log.id} className="flex gap-4 p-5">
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-slate-100 text-slate-500">
-                <Clock3 size={18} />
-              </span>
+              <Clock3 size={20} className="shrink-0 text-slate-500" />
               <div className="flex-1">
                 <p className="text-sm font-semibold capitalize">
                   {log.action.replaceAll("_", " ").toLowerCase()}

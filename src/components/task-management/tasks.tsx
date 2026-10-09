@@ -641,7 +641,7 @@ export function Board({ projectId }: { projectId: string }) {
   );
 }
 export function TaskDetail({ id }: { id: string }) {
-  const { role, organization, canManage } = useWorkspace();
+  const { role, organization, canManage, user } = useWorkspace();
   const act = useAction();
   const [subtaskOpen, setSubtaskOpen] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
@@ -659,7 +659,7 @@ export function TaskDetail({ id }: { id: string }) {
           `organizations/${organization?.id}/members?limit=100`,
         )
       ).data,
-    enabled: Boolean(organization && canManage),
+    enabled: Boolean(organization && role !== "GUEST"),
   });
   const availableLabels = useQuery({
     queryKey: ["labels", organization?.id],
@@ -669,14 +669,16 @@ export function TaskDetail({ id }: { id: string }) {
     enabled: Boolean(organization),
   });
   const comment = useForm({
-    defaultValues: { content: "" },
+    defaultValues: { content: "", mentionedUserIds: [] as string[] },
     validators: {
-      onSubmit: z.object({ content: z.string().min(1).max(3000) }),
+      onSubmit: z.object({
+        content: z.string().min(1).max(3000),
+        mentionedUserIds: z.array(z.uuid()).max(20),
+      }),
     },
     onSubmit: async ({ value }) => {
       const ok = await act(
-        () =>
-          api("comments", json("POST", { taskId: id, content: value.content })),
+        () => api("comments", json("POST", { taskId: id, ...value })),
         "Comment added",
         [["task", id]],
       );
@@ -816,6 +818,18 @@ export function TaskDetail({ id }: { id: string }) {
                     <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700">
                       {entry.content}
                     </p>
+                    {entry.mentions && entry.mentions.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {entry.mentions.map(({ user: mentioned }) => (
+                          <span
+                            key={mentioned.id}
+                            className="text-xs font-semibold text-blue-600"
+                          >
+                            @{mentioned.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -849,6 +863,73 @@ export function TaskDetail({ id }: { id: string }) {
                       {field.state.meta.errors.length > 0 && (
                         <p className="text-xs text-rose-600">
                           Enter a comment.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </comment.Field>
+                <comment.Field name="mentionedUserIds">
+                  {(field) => (
+                    <div className="mt-4">
+                      <p className="field-label">Mention teammates</p>
+                      <div className="flex max-h-32 flex-wrap gap-2 overflow-y-auto">
+                        {members.data
+                          ?.filter((member) => member.user.id !== user.id)
+                          .map((member) => {
+                            const selected = field.state.value.includes(
+                              member.user.id,
+                            );
+                            return (
+                              <label
+                                key={member.id}
+                                className={`cursor-pointer rounded-lg border px-3 py-1.5 text-xs font-medium ${selected ? "border-blue-300 text-blue-700" : "border-slate-200 text-slate-600"}`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  className="sr-only"
+                                  checked={selected}
+                                  disabled={
+                                    !selected && field.state.value.length >= 20
+                                  }
+                                  onChange={() =>
+                                    field.handleChange(
+                                      selected
+                                        ? field.state.value.filter(
+                                            (id) => id !== member.user.id,
+                                          )
+                                        : [
+                                            ...field.state.value,
+                                            member.user.id,
+                                          ],
+                                    )
+                                  }
+                                />
+                                @{member.user.name}
+                              </label>
+                            );
+                          })}
+                        {members.isPending && (
+                          <span className="text-xs text-slate-500">
+                            Loading teammates…
+                          </span>
+                        )}
+                        {members.isSuccess &&
+                          !members.data?.some(
+                            (member) => member.user.id !== user.id,
+                          ) && (
+                            <span className="text-xs text-slate-500">
+                              No teammates available to mention.
+                            </span>
+                          )}
+                        {members.isError && (
+                          <span className="text-xs text-rose-600">
+                            Teammates could not be loaded.
+                          </span>
+                        )}
+                      </div>
+                      {field.state.meta.errors.length > 0 && (
+                        <p className="mt-1 text-xs text-rose-600">
+                          Select up to 20 teammates.
                         </p>
                       )}
                     </div>

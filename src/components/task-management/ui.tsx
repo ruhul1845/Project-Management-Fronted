@@ -98,9 +98,7 @@ export function EmptyState({
 }) {
   return (
     <div className="panel flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
-      <div className="mb-4 grid size-12 place-items-center rounded-2xl bg-slate-100 text-slate-500">
-        <Inbox size={22} />
-      </div>
+      <Inbox size={26} className="mb-4 text-slate-500" />
       <h3 className="text-base font-semibold text-slate-900">{title}</h3>
       <p className="mt-1 max-w-sm text-sm text-slate-500">{detail}</p>
       {action && <div className="mt-5">{action}</div>}

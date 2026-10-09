@@ -72,9 +72,7 @@ export default function Features() {
       <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {items.map(({ icon: Icon, title, text }) => (
           <div key={title} className="panel p-7">
-            <div className="grid size-11 place-items-center rounded-xl bg-blue-50 text-blue-600">
-              <Icon size={21} />
-            </div>
+            <Icon size={25} className="text-blue-600" />
             <h2 className="mt-6 text-lg font-semibold">{title}</h2>
             <p className="mt-3 text-sm leading-6 text-slate-500">{text}</p>
           </div>

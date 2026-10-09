@@ -278,9 +278,7 @@ export function AdminOrganizations() {
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {data.data.data.map((org) => (
             <div key={org.id} className="panel p-6">
-              <span className="grid size-11 place-items-center rounded-xl bg-blue-50 text-blue-600">
-                <Building2 size={21} />
-              </span>
+              <Building2 size={25} className="text-blue-600" />
               <h2 className="mt-5 text-lg font-semibold">{org.name}</h2>
               <p className="mt-1 text-sm text-slate-500">
                 {org.owner?.name ?? "Owner"} · {org.owner?.email}
