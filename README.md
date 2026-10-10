@@ -47,13 +47,3 @@ Public: `/`, `/about`, `/features`, `/pricing`, `/contact`, `/faq`, `/login`, `/
 Workspace: `/workspace`, `/projects`, `/projects/[id]`, `/projects/[id]/board`, `/projects/[id]/tasks`, `/projects/[id]/sprints`, `/tasks/[id]`, `/tasks/mine`, `/teams`, `/teams/[id]`, `/members`, `/calendar`, `/notifications`, `/analytics`, `/audit`, `/billing`, `/settings`.
 
 System administration: `/admin`, `/admin/users`, `/admin/organizations`.
-
-## Checks
-
-```bash
-npx tsc --noEmit
-npm run build
-npm run lint
-```
-
-The [walkthrough plan](VIDEO_WALKTHROUGH.md) maps the main screens to the B7A7 video and submission checklist.
