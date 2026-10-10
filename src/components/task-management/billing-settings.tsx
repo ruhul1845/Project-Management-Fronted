@@ -1,6 +1,6 @@
 "use client";
 import { useForm } from "@tanstack/react-form";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowRight,
   CheckCircle2,
@@ -124,6 +124,7 @@ export function Billing() {
 }
 export function PaymentReturn({ cancelled = false }: { cancelled?: boolean }) {
   const { organization } = useWorkspace();
+  const queryClient = useQueryClient();
   const details = useQuery({
     queryKey: ["organization", organization?.id, "payment-return"],
     queryFn: async () =>
@@ -133,6 +134,11 @@ export function PaymentReturn({ cancelled = false }: { cancelled?: boolean }) {
       query.state.data?.subscriptionStatus === "ACTIVE" ? false : 5000,
   });
   const active = details.data?.subscriptionStatus === "ACTIVE";
+  useEffect(() => {
+    if (active) {
+      queryClient.invalidateQueries({ queryKey: ["organizations", "mine"] });
+    }
+  }, [active, queryClient]);
   return (
     <div className="mx-auto max-w-xl py-14 text-center">
       <span

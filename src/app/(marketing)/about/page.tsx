@@ -1,6 +1,5 @@
-import { ArrowRight, Compass, Focus, HeartHandshake } from "lucide-react";
+import { Compass, Focus, HeartHandshake } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 export const metadata: Metadata = {
   title: "About",
   description: "Why Project Management makes room for focused, connected work.",
@@ -41,17 +40,6 @@ export default function About() {
             <p className="mt-3 leading-7 text-slate-500">{text}</p>
           </div>
         ))}
-      </div>
-      <div className="mt-18 rounded-3xl bg-blue-600 p-10 text-white md:p-14">
-        <h2 className="text-3xl font-semibold tracking-tight">
-          A better rhythm for your team starts here.
-        </h2>
-        <Link
-          href="/register"
-          className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-blue-700"
-        >
-          Get started <ArrowRight size={16} />
-        </Link>
       </div>
     </main>
   );

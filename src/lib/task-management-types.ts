@@ -27,7 +27,7 @@ export interface Organization {
   name: string;
   description?: string | null;
   slug: string;
-  subscriptionStatus?: string;
+  subscriptionStatus?: "FREE" | "ACTIVE" | "PAST_DUE" | "CANCELLED";
   memberships?: { role: OrgRole }[];
   _count?: { memberships: number; projects: number; teams?: number };
   owner?: User;

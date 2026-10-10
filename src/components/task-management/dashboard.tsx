@@ -191,7 +191,7 @@ export function CreateWorkspace() {
   );
 }
 export default function Dashboard() {
-  const { organization, user, canManage } = useWorkspace();
+  const { organization, user, canManage, isPro } = useWorkspace();
   const orgId = organization?.id;
   const analytics = useQuery({
     queryKey: ["analytics", orgId],
@@ -201,7 +201,7 @@ export default function Dashboard() {
           `analytics/dashboard?${qs({ organizationId: orgId })}`,
         )
       ).data,
-    enabled: Boolean(orgId && canManage),
+    enabled: Boolean(orgId && canManage && isPro),
   });
   const projects = useQuery({
     queryKey: ["projects", orgId, "recent"],
@@ -241,7 +241,7 @@ export default function Dashboard() {
     );
   if (!organization) return <CreateWorkspace />;
   const stats =
-    canManage && analytics.data
+    canManage && isPro && analytics.data
       ? [
           {
             label: "Total projects",

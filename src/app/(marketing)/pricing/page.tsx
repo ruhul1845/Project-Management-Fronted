@@ -58,7 +58,7 @@ export default function Pricing() {
             {[
               "Everything in Workspace",
               "Organization analytics",
-              "Activity and administration tools",
+              "Workspace activity log",
             ].map((item) => (
               <li key={item} className="flex gap-3 text-sm">
                 <Check size={17} className="text-emerald-600" />

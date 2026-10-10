@@ -9,6 +9,7 @@ import {
   CreditCard,
   FolderKanban,
   LayoutDashboard,
+  LockKeyhole,
   LogOut,
   Menu,
   Plus,
@@ -34,6 +35,7 @@ type WorkspaceContext = {
   setOrganizationId: (id: string) => void;
   canManage: boolean;
   isOwner: boolean;
+  isPro: boolean;
 };
 const Context = createContext<WorkspaceContext | null>(null);
 export function useWorkspace() {
@@ -83,6 +85,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const role = organization?.memberships?.[0]?.role ?? null;
   const canManage = role === "OWNER" || role === "MANAGER";
   const isOwner = role === "OWNER";
+  const isPro = organization?.subscriptionStatus === "ACTIVE";
   const value = useMemo(
     () => ({
       user: user as User,
@@ -91,13 +94,23 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       role,
       canManage,
       isOwner,
+      isPro,
       setOrganizationId: (id: string) => {
         localStorage.setItem("task-management-org", id);
         setSelectedId(id);
         queryClient.invalidateQueries();
       },
     }),
-    [user, organizations, organization, role, canManage, isOwner, queryClient],
+    [
+      user,
+      organizations,
+      organization,
+      role,
+      canManage,
+      isOwner,
+      isPro,
+      queryClient,
+    ],
   );
   const nav =
     user?.role === "ADMIN"
@@ -122,8 +135,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           { label: "Notifications", href: "/notifications", icon: Bell },
           ...(canManage
             ? [
-                { label: "Analytics", href: "/analytics", icon: BarChart3 },
-                { label: "Activity log", href: "/audit", icon: Shield },
+                {
+                  label: "Analytics",
+                  href: "/analytics",
+                  icon: BarChart3,
+                  locked: !isPro,
+                },
+                {
+                  label: "Activity log",
+                  href: "/audit",
+                  icon: Shield,
+                  locked: !isPro,
+                },
               ]
             : []),
           ...(isOwner
@@ -224,6 +247,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 >
                   <item.icon size={18} strokeWidth={active ? 2.2 : 1.8} />
                   <span>{item.label}</span>
+                  {"locked" in item && item.locked && (
+                    <LockKeyhole
+                      size={14}
+                      className="ml-auto text-slate-400"
+                      aria-label="Pro feature"
+                    />
+                  )}
                   {item.href === "/notifications" &&
                     typeof unread.data === "number" &&
                     unread.data > 0 && (

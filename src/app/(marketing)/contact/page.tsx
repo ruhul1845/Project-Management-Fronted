@@ -6,7 +6,8 @@ export const metadata: Metadata = {
   description: "Find help and contact options for Project Management.",
 };
 export default function Contact() {
-  const supportEmail = process.env.SUPPORT_EMAIL;
+  const supportEmail =
+    process.env.SUPPORT_EMAIL || "support@projectmanagement.example";
   return (
     <main className="mx-auto max-w-6xl px-5 py-20 md:px-8">
       <p className="eyebrow">Help & contact</p>
@@ -18,16 +19,14 @@ export default function Contact() {
         and team.
       </p>
       <div className="mt-14 grid gap-5 md:grid-cols-2">
-        {supportEmail && (
-          <a
-            href={`mailto:${supportEmail}`}
-            className="panel p-8 transition hover:border-blue-300"
-          >
-            <Mail className="text-blue-600" size={25} />
-            <h2 className="mt-6 text-xl font-semibold">Email support</h2>
-            <p className="mt-2 text-sm text-slate-500">{supportEmail}</p>
-          </a>
-        )}
+        <a
+          href={`mailto:${supportEmail}`}
+          className="panel p-8 transition hover:border-blue-300"
+        >
+          <Mail className="text-blue-600" size={25} />
+          <h2 className="mt-6 text-xl font-semibold">Email support</h2>
+          <p className="mt-2 text-sm text-slate-500">{supportEmail}</p>
+        </a>
         <Link
           href="/faq"
           className="panel p-8 transition hover:border-blue-300"

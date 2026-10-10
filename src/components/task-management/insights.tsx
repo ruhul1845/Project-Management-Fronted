@@ -1,6 +1,13 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ArrowRight, Bell, CheckCheck, Clock3 } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Bell,
+  CheckCheck,
+  Clock3,
+  LockKeyhole,
+} from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { api, json, messageOf, qs } from "@/lib/task-management-api";
@@ -334,8 +341,37 @@ export function Notifications() {
     </>
   );
 }
+function ProFeatureGate({ feature }: { feature: string }) {
+  const { organization, isOwner } = useWorkspace();
+
+  return (
+    <>
+      <PageHeading eyebrow={organization?.name} title={feature} />
+      <div className="panel flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+        <LockKeyhole size={28} className="text-blue-600" />
+        <h2 className="mt-4 text-xl font-semibold">
+          Unlock {feature} with Pro
+        </h2>
+        <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
+          {isOwner
+            ? "Activate Pro for this workspace to use this feature. Access unlocks after payment is confirmed."
+            : "Ask your workspace owner to activate Pro to use this feature."}
+        </p>
+        {isOwner && (
+          <Link
+            href="/billing"
+            className="mt-6 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700"
+          >
+            Open billing
+          </Link>
+        )}
+      </div>
+    </>
+  );
+}
+
 export function AnalyticsView() {
-  const { organization, canManage } = useWorkspace();
+  const { organization, canManage, isPro } = useWorkspace();
   const data = useQuery({
     queryKey: ["analytics", organization?.id],
     queryFn: async () =>
@@ -344,12 +380,13 @@ export function AnalyticsView() {
           `analytics/dashboard?${qs({ organizationId: organization?.id })}`,
         )
       ).data,
-    enabled: Boolean(organization && canManage),
+    enabled: Boolean(organization && canManage && isPro),
   });
   if (!canManage)
     return (
       <ErrorState message="Only owners and managers can view analytics." />
     );
+  if (!isPro) return <ProFeatureGate feature="Analytics" />;
   const counts = data.data?.tasksByStatus ?? {};
   const max = Math.max(1, ...Object.values(counts));
   return (
@@ -415,7 +452,7 @@ export function AnalyticsView() {
   );
 }
 export function AuditView() {
-  const { organization, canManage } = useWorkspace();
+  const { organization, canManage, isPro } = useWorkspace();
   const url = useUrlState();
   const page = Math.max(1, Number(url.get("page")) || 1);
   const data = useQuery({
@@ -424,12 +461,13 @@ export function AuditView() {
       api<AuditLog[]>(
         `analytics/audit-logs?${qs({ organizationId: organization?.id, page, limit: 20 })}`,
       ),
-    enabled: Boolean(organization && canManage),
+    enabled: Boolean(organization && canManage && isPro),
   });
   if (!canManage)
     return (
       <ErrorState message="Only owners and managers can view the activity log." />
     );
+  if (!isPro) return <ProFeatureGate feature="Activity log" />;
   return (
     <>
       <PageHeading

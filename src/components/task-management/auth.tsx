@@ -72,23 +72,23 @@ export function AuthFrame({
         </p>
       </div>
       <div
-        className="hidden bg-white px-12 pb-16 pt-20 lg:flex lg:flex-col xl:px-16 xl:pt-24"
+        className="hidden bg-white px-12 py-16 lg:flex lg:items-center lg:justify-center xl:px-16"
         style={{
           backgroundImage:
-            "linear-gradient(to bottom, rgb(255 255 255 / 96%), rgb(255 255 255 / 85%) 35%, rgb(255 255 255 / 15%) 75%), url('/img/login.jpg')",
+            "linear-gradient(to bottom, rgb(255 255 255 / 55%), rgb(255 255 255 / 82%) 50%, rgb(255 255 255 / 35%)), url('/img/login.jpg')",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
         }}
       >
-        <div className="mx-auto w-full max-w-lg">
+        <div className="mx-auto w-full max-w-xl text-center">
           <span className="text-xs font-bold uppercase tracking-[.2em] text-blue-800">
             Thoughtful work, together
           </span>
-          <h2 className="mt-5 text-5xl font-semibold leading-[1.13] tracking-tight text-slate-950">
+          <h2 className="mt-8 text-5xl font-semibold leading-[1.2] tracking-tight text-slate-950">
             Give every good idea room to become great work.
           </h2>
-          <p className="mt-5 max-w-md leading-7 text-slate-800">
+          <p className="mx-auto mt-8 max-w-lg text-lg leading-8 text-slate-800">
             Bring your projects, tasks, and people into one beautiful, focused
             workspace.
           </p>

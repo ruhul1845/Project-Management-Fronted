@@ -44,7 +44,7 @@ const items = [
   },
   {
     icon: ChartNoAxesCombined,
-    title: "Analytics",
+    title: "Pro analytics",
     text: "Understand progress and workload across your organization.",
   },
   {
@@ -54,7 +54,7 @@ const items = [
   },
   {
     icon: ShieldCheck,
-    title: "Activity history",
+    title: "Pro activity history",
     text: "See the important changes in your workspace.",
   },
 ];
