@@ -70,7 +70,7 @@ function ProjectCreator({ onClose }: { onClose: () => void }) {
     },
   });
   return (
-    <div className="panel mb-7 p-6 md:p-8">
+    <div className="panel mb-7 border-blue-200 p-6 shadow-lg shadow-slate-900/5 md:p-8">
       <div className="mb-6 flex items-start justify-between">
         <div>
           <p className="eyebrow">New project</p>
@@ -79,7 +79,7 @@ function ProjectCreator({ onClose }: { onClose: () => void }) {
         <button
           type="button"
           onClick={onClose}
-          className="text-sm text-slate-500"
+          className="text-sm font-semibold text-slate-700 hover:text-blue-700"
         >
           Close
         </button>
@@ -239,7 +239,7 @@ export function ProjectsContent() {
             <button
               type="button"
               onClick={() => setCreateOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white"
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
             >
               <Plus size={16} /> New project
             </button>
@@ -249,7 +249,7 @@ export function ProjectsContent() {
       {createOpen && canManage && (
         <ProjectCreator onClose={() => setCreateOpen(false)} />
       )}
-      <div className="mb-5 flex flex-wrap gap-3">
+      <div className="panel mb-5 flex flex-wrap gap-3 p-4 shadow-sm shadow-slate-900/5">
         <form
           onSubmit={(event) => {
             event.preventDefault();
@@ -257,7 +257,7 @@ export function ProjectsContent() {
           }}
           className="relative min-w-52 flex-1 sm:max-w-xs"
         >
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-600" />
           <input
             className="field field-search"
             value={search}
@@ -315,22 +315,22 @@ export function ProjectsContent() {
               <Link
                 href={`/projects/${project.id}`}
                 key={project.id}
-                className="panel group p-6 transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-slate-200/40"
+                className="panel group border-slate-200 p-6 shadow-sm shadow-slate-900/5 transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-xl hover:shadow-slate-900/10"
               >
                 <div className="flex items-start justify-between">
-                  <span className="text-xs font-bold tracking-wide text-blue-700">
-                    {project.key.slice(0, 3)}
+                  <span className="text-xs font-bold tracking-wide text-blue-800">
+                    {project.key}
                   </span>
                   <StatusPill status={project.status} />
                 </div>
-                <h2 className="mt-6 truncate text-lg font-semibold group-hover:text-blue-700">
+                <h2 className="mt-6 truncate text-xl font-bold text-slate-950 group-hover:text-blue-700">
                   {project.name}
                 </h2>
-                <p className="mt-2 line-clamp-2 h-10 text-sm leading-5 text-slate-500">
+                <p className="mt-2 line-clamp-2 h-10 text-sm leading-5 text-slate-700">
                   {project.description ||
                     "Open the project to see its tasks and progress."}
                 </p>
-                <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 text-xs text-slate-500">
+                <div className="mt-6 flex items-center justify-between gap-3 border-t border-slate-200 pt-4 text-xs font-medium text-slate-700">
                   <span>
                     {project._count?.tasks ?? 0} tasks ·{" "}
                     {project.team?.name ?? "Organization"}
@@ -340,7 +340,7 @@ export function ProjectsContent() {
               </Link>
             ))}
           </div>
-          <div className="mt-6 flex items-center justify-between text-sm text-slate-500">
+          <div className="mt-6 flex items-center justify-between text-sm text-slate-700">
             <span>
               {list.data.meta?.total ?? list.data.data.length} projects
             </span>
@@ -389,7 +389,7 @@ export function ProjectOverview({ id }: { id: string }) {
     <>
       <Link
         href="/projects"
-        className="mb-6 inline-flex items-center gap-2 text-sm text-slate-500 hover:text-blue-600"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-slate-700 hover:text-blue-600"
       >
         <ArrowLeft size={16} /> All projects
       </Link>
@@ -404,59 +404,74 @@ export function ProjectOverview({ id }: { id: string }) {
       <div className="grid gap-5 md:grid-cols-3">
         <Link
           href={`/projects/${id}/board`}
-          className="panel p-6 hover:border-blue-200"
+          className="panel group border-slate-200 p-6 shadow-sm shadow-slate-900/5 transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg"
         >
-          <FolderKanban className="text-blue-600" />
-          <h2 className="mt-5 font-semibold">Board</h2>
-          <p className="mt-2 text-sm text-slate-500">
+          <span className="inline-flex p-1 text-blue-700">
+            <FolderKanban size={22} />
+          </span>
+          <h2 className="mt-5 text-lg font-bold text-slate-950">Board</h2>
+          <p className="mt-2 text-sm text-slate-700">
             Follow work across every stage.
           </p>
-          <ArrowRight className="mt-5 text-blue-600" size={18} />
+          <ArrowRight
+            className="mt-5 text-blue-700 transition group-hover:translate-x-1"
+            size={18}
+          />
         </Link>
         <Link
           href={`/projects/${id}/tasks`}
-          className="panel p-6 hover:border-blue-200"
+          className="panel group border-slate-200 p-6 shadow-sm shadow-slate-900/5 transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg"
         >
-          <CircleDashed className="text-blue-600" />
-          <h2 className="mt-5 font-semibold">Tasks</h2>
-          <p className="mt-2 text-sm text-slate-500">
+          <span className="inline-flex p-1 text-indigo-700">
+            <CircleDashed size={22} />
+          </span>
+          <h2 className="mt-5 text-lg font-bold text-slate-950">Tasks</h2>
+          <p className="mt-2 text-sm text-slate-700">
             {item._count?.tasks ?? 0} tasks in this project.
           </p>
-          <ArrowRight className="mt-5 text-blue-600" size={18} />
+          <ArrowRight
+            className="mt-5 text-blue-700 transition group-hover:translate-x-1"
+            size={18}
+          />
         </Link>
         <Link
           href={`/projects/${id}/sprints`}
-          className="panel p-6 hover:border-blue-200"
+          className="panel group border-slate-200 p-6 shadow-sm shadow-slate-900/5 transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg"
         >
-          <CalendarDays className="text-blue-600" />
-          <h2 className="mt-5 font-semibold">Sprints</h2>
-          <p className="mt-2 text-sm text-slate-500">
+          <span className="inline-flex p-1 text-cyan-800">
+            <CalendarDays size={22} />
+          </span>
+          <h2 className="mt-5 text-lg font-bold text-slate-950">Sprints</h2>
+          <p className="mt-2 text-sm text-slate-700">
             Plan focused delivery cycles.
           </p>
-          <ArrowRight className="mt-5 text-blue-600" size={18} />
+          <ArrowRight
+            className="mt-5 text-blue-700 transition group-hover:translate-x-1"
+            size={18}
+          />
         </Link>
       </div>
-      <div className="panel mt-6 p-6">
-        <h2 className="font-semibold">Project details</h2>
+      <div className="panel mt-6 p-6 shadow-sm shadow-slate-900/5">
+        <h2 className="text-lg font-bold text-slate-950">Project details</h2>
         <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
           <div>
-            <dt className="text-slate-500">Status</dt>
+            <dt className="font-medium text-slate-700">Status</dt>
             <dd className="mt-1 font-medium">
               {item.status.replaceAll("_", " ")}
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Team</dt>
+            <dt className="font-medium text-slate-700">Team</dt>
             <dd className="mt-1 font-medium">
               {item.team?.name ?? "Organization-wide"}
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Start date</dt>
+            <dt className="font-medium text-slate-700">Start date</dt>
             <dd className="mt-1 font-medium">{formatDate(item.startDate)}</dd>
           </div>
           <div>
-            <dt className="text-slate-500">Due date</dt>
+            <dt className="font-medium text-slate-700">Due date</dt>
             <dd className="mt-1 font-medium">{formatDate(item.dueDate)}</dd>
           </div>
         </dl>

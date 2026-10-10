@@ -14,7 +14,7 @@ export function Brand({ compact = false }: { compact?: boolean }) {
         alt=""
         width={40}
         height={40}
-        className="size-9 shrink-0 object-contain"
+        className="size-9 shrink-0 bg-transparent object-contain"
         priority
       />
       {!compact && (
@@ -42,7 +42,7 @@ export function PageHeading({
         {eyebrow && <p className="eyebrow mb-2">{eyebrow}</p>}
         <h1 className="page-title">{title}</h1>
         {description && (
-          <p className="mt-2 max-w-2xl text-sm text-slate-500">{description}</p>
+          <p className="mt-2 max-w-2xl text-sm text-slate-700">{description}</p>
         )}
       </div>
       {action}
@@ -60,9 +60,9 @@ export function EmptyState({
 }) {
   return (
     <div className="panel flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
-      <Inbox size={26} className="mb-4 text-slate-500" />
+      <Inbox size={26} className="mb-4 text-slate-700" />
       <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-      <p className="mt-1 max-w-sm text-sm text-slate-500">{detail}</p>
+      <p className="mt-1 max-w-sm text-sm text-slate-700">{detail}</p>
       {action && <div className="mt-5">{action}</div>}
     </div>
   );
@@ -79,7 +79,7 @@ export function ErrorState({
       <p className="font-medium text-slate-900">
         We couldn&apos;t load this view
       </p>
-      <p className="mt-2 text-sm text-slate-500">{message}</p>
+      <p className="mt-2 text-sm text-slate-700">{message}</p>
       {retry && (
         <button
           type="button"
@@ -116,16 +116,14 @@ export function Pill({
   tone?: "slate" | "blue" | "green" | "amber" | "rose";
 }) {
   const colors = {
-    slate: "bg-slate-100 text-slate-600",
-    blue: "bg-blue-50 text-blue-700",
-    green: "bg-emerald-50 text-emerald-700",
-    amber: "bg-amber-50 text-amber-700",
-    rose: "bg-rose-50 text-rose-700",
+    slate: "text-slate-800",
+    blue: "text-blue-800",
+    green: "text-emerald-800",
+    amber: "text-amber-800",
+    rose: "text-rose-800",
   };
   return (
-    <span
-      className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${colors[tone]}`}
-    >
+    <span className={`inline-flex text-xs font-bold ${colors[tone]}`}>
       {children}
     </span>
   );

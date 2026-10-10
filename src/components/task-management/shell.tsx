@@ -245,7 +245,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${active ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"}`}
+                  className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition ${active ? "font-bold text-blue-700 underline decoration-2 underline-offset-4" : "text-slate-700 hover:text-blue-700"}`}
                 >
                   <item.icon size={18} strokeWidth={active ? 2.2 : 1.8} />
                   <span>{item.label}</span>
@@ -259,7 +259,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   {item.href === "/notifications" &&
                     typeof unread.data === "number" &&
                     unread.data > 0 && (
-                      <span className="ml-auto rounded-full bg-blue-600 px-1.5 text-[10px] text-white">
+                      <span className="ml-auto text-xs font-bold text-blue-800">
                         {unread.data}
                       </span>
                     )}
@@ -272,7 +272,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               href="/settings"
               className="flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-slate-50"
             >
-              <span className="grid size-9 place-items-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
+              <span className="w-5 shrink-0 text-center text-xs font-bold text-blue-800">
                 {initials(user.name)}
               </span>
               <span className="min-w-0 flex-1">
@@ -348,12 +348,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               >
                 <Bell size={17} />
                 {typeof unread.data === "number" && unread.data > 0 && (
-                  <span className="absolute -right-2 -top-2 flex min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold leading-5 text-white">
+                  <span className="absolute -right-2 -top-2 text-xs font-bold text-blue-800">
                     {unread.data > 99 ? "99+" : unread.data}
                   </span>
                 )}
               </Link>
-              <span className="grid size-9 place-items-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
+              <span className="w-5 text-center text-xs font-bold text-blue-800">
                 {initials(user.name)}
               </span>
             </div>

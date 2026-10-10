@@ -314,7 +314,7 @@ export function LoginForm() {
                   ? "Demo account is not configured"
                   : `Sign in as ${label}`
               }
-              className={`flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-3 text-xs font-semibold text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-45 ${role === "MANAGER" ? "col-span-2" : ""}`}
+              className={`flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-3 text-xs font-semibold text-slate-700 transition hover:border-blue-300 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-45 ${role === "MANAGER" ? "col-span-2" : ""}`}
             >
               <Icon size={15} />
               {label}

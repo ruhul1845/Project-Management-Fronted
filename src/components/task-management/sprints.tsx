@@ -1,7 +1,7 @@
 "use client";
 import { useForm } from "@tanstack/react-form";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, CalendarDays, Flag, Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
@@ -63,7 +63,7 @@ export default function Sprints({ projectId }: { projectId: string }) {
     <>
       <Link
         href={`/projects/${projectId}`}
-        className="mb-6 inline-flex items-center gap-2 text-sm text-slate-500"
+        className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-blue-700"
       >
         <ArrowLeft size={16} /> Project overview
       </Link>
@@ -76,7 +76,7 @@ export default function Sprints({ projectId }: { projectId: string }) {
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white"
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
             >
               <Plus size={16} /> New sprint
             </button>
@@ -84,8 +84,10 @@ export default function Sprints({ projectId }: { projectId: string }) {
         }
       />
       {open && (
-        <div className="panel mb-6 p-6">
-          <h2 className="mb-5 text-lg font-semibold">Plan a sprint</h2>
+        <div className="panel mb-6 border-blue-200 p-6 shadow-lg shadow-slate-900/5">
+          <h2 className="mb-5 text-xl font-bold text-slate-950">
+            Plan a sprint
+          </h2>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -132,7 +134,7 @@ export default function Sprints({ projectId }: { projectId: string }) {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="rounded-xl border px-5 py-2.5 text-sm"
+                className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700"
               >
                 Cancel
               </button>
@@ -148,56 +150,78 @@ export default function Sprints({ projectId }: { projectId: string }) {
           retry={() => sprints.refetch()}
         />
       ) : sprints.data?.length ? (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-5 lg:grid-cols-2">
           {sprints.data.map((sprint) => (
-            <div key={sprint.id} className="panel p-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">{sprint.name}</h2>
-                <StatusPill status={sprint.status} />
-              </div>
-              <p className="mt-3 text-sm text-slate-500">
-                {sprint.goal || "No goal added."}
-              </p>
-              <p className="mt-5 text-xs text-slate-500">
-                {formatDate(sprint.startDate)} – {formatDate(sprint.endDate)} ·{" "}
-                {sprint._count?.tasks ?? 0} tasks
-              </p>
-              {canManage && (
-                <div className="mt-5 border-t pt-4">
-                  {sprint.status === "PLANNED" && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        act(
-                          () =>
-                            api(`sprints/${sprint.id}/start`, json("PATCH")),
-                          "Sprint started",
-                          [["sprints", projectId]],
-                        )
-                      }
-                      className="text-sm font-semibold text-blue-600"
-                    >
-                      Start sprint
-                    </button>
-                  )}
-                  {sprint.status === "ACTIVE" && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        act(
-                          () =>
-                            api(`sprints/${sprint.id}/complete`, json("PATCH")),
-                          "Sprint completed",
-                          [["sprints", projectId]],
-                        )
-                      }
-                      className="text-sm font-semibold text-blue-600"
-                    >
-                      Complete sprint
-                    </button>
-                  )}
+            <div
+              key={sprint.id}
+              className="panel overflow-hidden border-slate-200 shadow-sm shadow-slate-900/5"
+            >
+              <div className="p-6 sm:p-7">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-blue-700">
+                      <Flag size={20} />
+                    </span>
+                    <h2 className="text-xl font-bold text-slate-950">
+                      {sprint.name}
+                    </h2>
+                  </div>
+                  <StatusPill status={sprint.status} />
                 </div>
-              )}
+                <p className="mt-5 min-h-10 text-sm leading-6 text-slate-700">
+                  {sprint.goal ||
+                    "Add a goal to give this sprint a clear outcome."}
+                </p>
+                <div className="mt-5 flex flex-wrap gap-3 rounded-xl border border-slate-200 px-4 py-3 text-xs font-semibold text-slate-700">
+                  <span className="inline-flex items-center gap-2">
+                    <CalendarDays size={15} className="text-blue-700" />
+                    {formatDate(sprint.startDate)} –{" "}
+                    {formatDate(sprint.endDate)}
+                  </span>
+                  <span className="ml-auto">
+                    {sprint._count?.tasks ?? 0} tasks
+                  </span>
+                </div>
+                {canManage && (
+                  <div className="mt-5 border-t border-slate-200 pt-4">
+                    {sprint.status === "PLANNED" && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          act(
+                            () =>
+                              api(`sprints/${sprint.id}/start`, json("PATCH")),
+                            "Sprint started",
+                            [["sprints", projectId]],
+                          )
+                        }
+                        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                      >
+                        Start sprint
+                      </button>
+                    )}
+                    {sprint.status === "ACTIVE" && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          act(
+                            () =>
+                              api(
+                                `sprints/${sprint.id}/complete`,
+                                json("PATCH"),
+                              ),
+                            "Sprint completed",
+                            [["sprints", projectId]],
+                          )
+                        }
+                        className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800"
+                      >
+                        Complete sprint
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           ))}
         </div>

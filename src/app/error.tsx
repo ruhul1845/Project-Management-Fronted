@@ -9,9 +9,7 @@ export default function ErrorPage({
 }) {
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center px-6 text-center">
-      <span className="grid size-16 place-items-center rounded-2xl bg-rose-50 text-2xl text-rose-600">
-        !
-      </span>
+      <span className="text-2xl font-bold text-rose-700">!</span>
       <h1 className="mt-6 text-3xl font-semibold tracking-tight">
         Something went wrong
       </h1>

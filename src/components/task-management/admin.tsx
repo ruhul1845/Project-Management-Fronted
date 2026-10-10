@@ -219,7 +219,7 @@ export function AdminUsers() {
               key={user.id}
               className="flex flex-wrap items-center gap-3 p-5"
             >
-              <span className="grid size-10 place-items-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
+              <span className="w-5 shrink-0 text-center text-xs font-bold text-blue-800">
                 {initials(user.name)}
               </span>
               <span className="min-w-0 flex-1">

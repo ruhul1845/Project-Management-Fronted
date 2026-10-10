@@ -111,7 +111,7 @@ export function CalendarView() {
       ) : (
         <>
           <div className="panel overflow-hidden">
-            <div className="grid grid-cols-7 border-b bg-slate-50 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <div className="grid grid-cols-7 border-b text-center text-[11px] font-semibold uppercase tracking-wider text-slate-700">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                 <div key={day} className="py-3">
                   {day}
@@ -131,7 +131,7 @@ export function CalendarView() {
                 .map((weekday) => (
                   <div
                     key={weekday}
-                    className="min-h-24 border-b border-r border-slate-100 bg-slate-50/40"
+                    className="min-h-24 border-b border-r border-slate-100"
                   />
                 ))}
               {Array.from({ length: days }, (_, index) => {
@@ -155,7 +155,7 @@ export function CalendarView() {
                           key={task.id}
                           href={`/tasks/${task.id}`}
                           title={task.title}
-                          className="block truncate rounded-md bg-blue-50 px-1.5 py-1 text-[10px] font-medium text-blue-700 md:text-xs"
+                          className="block truncate px-1.5 py-1 text-[10px] font-semibold text-blue-700 underline underline-offset-2 md:text-xs"
                         >
                           {task.title}
                         </Link>
@@ -257,14 +257,14 @@ export function Notifications() {
         <button
           type="button"
           onClick={() => url.set({ unread: null, page: 1 })}
-          className={`rounded-xl px-4 py-2 text-sm ${!unread ? "bg-blue-600 text-white" : "bg-white text-slate-600"}`}
+          className={`px-4 py-2 text-sm font-semibold ${!unread ? "text-blue-700 underline decoration-2 underline-offset-4" : "text-slate-700"}`}
         >
           All
         </button>
         <button
           type="button"
           onClick={() => url.set({ unread: "true", page: 1 })}
-          className={`rounded-xl px-4 py-2 text-sm ${unread ? "bg-blue-600 text-white" : "bg-white text-slate-600"}`}
+          className={`px-4 py-2 text-sm font-semibold ${unread ? "text-blue-700 underline decoration-2 underline-offset-4" : "text-slate-700"}`}
         >
           Unread
         </button>

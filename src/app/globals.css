@@ -54,7 +54,7 @@ button:not(:disabled),
   @apply rounded-2xl border border-slate-200/80 bg-white;
 }
 .field {
-  @apply h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100;
+  @apply h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm text-slate-950 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100;
 }
 .field.field-search {
   padding-left: 2.5rem;

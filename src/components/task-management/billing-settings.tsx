@@ -457,12 +457,8 @@ export function Settings() {
               {labels.data?.map((label) => (
                 <span
                   key={label.id}
-                  className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold"
+                  className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800"
                 >
-                  <span
-                    className="size-2.5 rounded-full"
-                    style={{ backgroundColor: label.color }}
-                  />
                   {label.name}
                   {isOwner && (
                     <button

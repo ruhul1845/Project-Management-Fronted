@@ -1,7 +1,15 @@
 "use client";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Paperclip, Plus, Search, UploadCloud } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarDays,
+  CircleDashed,
+  Paperclip,
+  Plus,
+  Search,
+  UploadCloud,
+} from "lucide-react";
 import Link from "next/link";
 import { Suspense, useState } from "react";
 import { z } from "zod";
@@ -12,8 +20,10 @@ import type {
   Label,
   Member,
   Priority,
+  Project,
   Task,
   TaskStatus,
+  Team,
 } from "@/lib/task-management-types";
 import { useAction, useUrlState } from "./hooks";
 import { useWorkspace } from "./shell";
@@ -49,6 +59,13 @@ const labels: Record<TaskStatus, string> = {
   DONE: "Done",
   CANCELLED: "Cancelled",
 };
+const boardCountColor: Record<TaskStatus, string> = {
+  TODO: "text-slate-800",
+  IN_PROGRESS: "text-blue-800",
+  IN_REVIEW: "text-amber-800",
+  DONE: "text-emerald-800",
+  CANCELLED: "text-rose-800",
+};
 const taskSchema = z.object({
   title: z.string().min(2).max(200),
   description: z.string().max(5000),
@@ -56,6 +73,48 @@ const taskSchema = z.object({
   dueDate: z.string(),
   assigneeId: z.string(),
 });
+
+function useAssignableMembers(projectId: string | undefined, enabled: boolean) {
+  const { organization } = useWorkspace();
+  const project = useQuery({
+    queryKey: ["project", projectId],
+    queryFn: async () => (await api<Project>(`projects/${projectId}`)).data,
+    enabled: enabled && Boolean(projectId),
+  });
+  const teamId = project.data?.teamId ?? project.data?.team?.id;
+  const team = useQuery({
+    queryKey: ["team", teamId],
+    queryFn: async () => (await api<Team>(`teams/${teamId}`)).data,
+    enabled: enabled && Boolean(teamId),
+  });
+  const organizationMembers = useQuery({
+    queryKey: ["members", organization?.id, "assign"],
+    queryFn: async () =>
+      (
+        await api<Member[]>(
+          `organizations/${organization?.id}/members?limit=100`,
+        )
+      ).data,
+    enabled: enabled && project.isSuccess && !teamId && Boolean(organization),
+  });
+  const users = teamId
+    ? (team.data?.members ?? []).flatMap((member) =>
+        member.user ? [member.user] : [],
+      )
+    : (organizationMembers.data ?? [])
+        .filter((member) => member.role !== "GUEST")
+        .map((member) => member.user);
+  return {
+    users,
+    teamName: team.data?.name,
+    isPending:
+      enabled &&
+      (project.isPending ||
+        (teamId ? team.isPending : organizationMembers.isPending)),
+    isError:
+      project.isError || (teamId ? team.isError : organizationMembers.isError),
+  };
+}
 
 export function TaskCreator({
   projectId,
@@ -66,18 +125,9 @@ export function TaskCreator({
   parentId?: string;
   onClose: () => void;
 }) {
-  const { organization, canManage } = useWorkspace();
+  const { canManage } = useWorkspace();
   const act = useAction();
-  const members = useQuery({
-    queryKey: ["members", organization?.id, "assign"],
-    queryFn: async () =>
-      (
-        await api<Member[]>(
-          `organizations/${organization?.id}/members?limit=100`,
-        )
-      ).data,
-    enabled: Boolean(organization && canManage),
-  });
+  const assignable = useAssignableMembers(projectId, canManage);
   const form = useForm({
     defaultValues: {
       title: "",
@@ -88,6 +138,19 @@ export function TaskCreator({
     },
     validators: { onSubmit: taskSchema },
     onSubmit: async ({ value }) => {
+      if (
+        value.assigneeId &&
+        !assignable.users.some((person) => person.id === value.assigneeId)
+      ) {
+        toast.add({
+          title: "Choose an eligible assignee",
+          description: assignable.teamName
+            ? "This person is not a member of the project's team."
+            : "This person is not an eligible workspace member.",
+          type: "error",
+        });
+        return;
+      }
       const ok = await act(
         () =>
           api(
@@ -118,14 +181,14 @@ export function TaskCreator({
     },
   });
   return (
-    <div className="panel mb-6 p-6">
+    <div className="panel mb-6 border-blue-200 p-6 shadow-lg shadow-slate-900/5 sm:p-8">
       <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-lg font-semibold">
+        <h2 className="text-xl font-bold text-slate-950">
           {parentId ? "Add subtask" : "Create task"}
         </h2>
         <button
           type="button"
-          className="text-sm text-slate-500"
+          className="text-sm font-semibold text-slate-700 hover:text-blue-700"
           onClick={onClose}
         >
           Close
@@ -222,17 +285,25 @@ export function TaskCreator({
                   id="task-assignee"
                   className="field"
                   value={field.state.value}
+                  disabled={assignable.isPending || assignable.isError}
                   onChange={(e) => field.handleChange(e.target.value)}
                 >
                   <option value="">Unassigned</option>
-                  {members.data
-                    ?.filter((member) => member.role !== "GUEST")
-                    .map((member) => (
-                      <option key={member.user.id} value={member.user.id}>
-                        {member.user.name}
-                      </option>
-                    ))}
+                  {assignable.users.map((person) => (
+                    <option key={person.id} value={person.id}>
+                      {person.name}
+                    </option>
+                  ))}
                 </select>
+                <p className="mt-2 text-xs font-medium text-slate-700">
+                  {assignable.isError
+                    ? "Assignees could not be loaded. Try again shortly."
+                    : assignable.isPending
+                      ? "Loading eligible teammates…"
+                      : assignable.teamName
+                        ? `Only ${assignable.teamName} team members can be assigned.`
+                        : "Choose a workspace member for this project."}
+                </p>
               </div>
             )}
           </form.Field>
@@ -258,14 +329,16 @@ function TaskRow({ task }: { task: Task }) {
   return (
     <Link
       href={`/tasks/${task.id}`}
-      className="flex items-center gap-4 border-b border-slate-100 px-5 py-4 last:border-0 hover:bg-blue-50/30"
+      className="group flex flex-wrap items-center gap-4 border-b border-slate-200 px-5 py-5 transition last:border-0 sm:flex-nowrap"
     >
-      <span className="size-4 shrink-0 rounded-full border-2 border-slate-300" />
+      <span className="grid size-9 shrink-0 place-items-center text-blue-700">
+        <CircleDashed size={18} />
+      </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-medium text-slate-900">
+        <span className="block truncate text-sm font-bold text-slate-950 group-hover:text-blue-700">
           {task.title}
         </span>
-        <span className="mt-1 block text-xs text-slate-500">
+        <span className="mt-1 block text-xs font-medium text-slate-700">
           {task.project?.name ?? task.assignee?.name ?? "Unassigned"} · Due{" "}
           {formatDate(task.dueDate)}
         </span>
@@ -301,20 +374,20 @@ export function ProjectTasks({ projectId }: { projectId: string }) {
     <>
       <Link
         href={`/projects/${projectId}`}
-        className="mb-6 inline-flex items-center gap-2 text-sm text-slate-500"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-slate-700"
       >
         <ArrowLeft size={16} /> Project overview
       </Link>
       <PageHeading
         eyebrow="Project work"
         title="Tasks"
-        description="All the details, owners, and next steps in one view."
+        description="Find every task, owner, and next step for this project."
         action={
           role !== "GUEST" && (
             <button
               type="button"
               onClick={() => setCreateOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white"
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
             >
               <Plus size={16} /> Add task
             </button>
@@ -327,7 +400,7 @@ export function ProjectTasks({ projectId }: { projectId: string }) {
           onClose={() => setCreateOpen(false)}
         />
       )}
-      <div className="mb-5 flex flex-wrap gap-3">
+      <div className="panel mb-5 flex flex-wrap gap-3 p-4 shadow-sm shadow-slate-900/5">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -337,7 +410,7 @@ export function ProjectTasks({ projectId }: { projectId: string }) {
         >
           <Search
             size={16}
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-600"
           />
           <input
             aria-label="Search tasks"
@@ -383,12 +456,12 @@ export function ProjectTasks({ projectId }: { projectId: string }) {
         />
       ) : tasks.data?.data.length ? (
         <>
-          <div className="panel overflow-hidden">
+          <div className="panel overflow-hidden shadow-sm shadow-slate-900/5">
             {tasks.data.data.map((task) => (
               <TaskRow key={task.id} task={task} />
             ))}
           </div>
-          <div className="mt-5 flex justify-between text-sm text-slate-500">
+          <div className="mt-5 flex justify-between text-sm text-slate-700">
             <span>{tasks.data.meta?.total ?? 0} tasks</span>
             <div className="flex gap-2">
               <button
@@ -570,18 +643,31 @@ export function Board({ projectId }: { projectId: string }) {
       client.invalidateQueries({ queryKey: ["tasks", projectId] });
     },
   });
+  const totalTasks = statuses.reduce(
+    (total, status) => total + (board.data?.columns[status]?.length ?? 0),
+    0,
+  );
+  const completedTasks = board.data?.columns.DONE?.length ?? 0;
   return (
     <>
       <Link
         href={`/projects/${projectId}`}
-        className="mb-6 inline-flex items-center gap-2 text-sm text-slate-500"
+        className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-blue-700"
       >
         <ArrowLeft size={16} /> Project overview
       </Link>
       <PageHeading
         eyebrow="Visual workflow"
         title="Project board"
-        description="See where work stands and move it forward."
+        description="Move each task through a clear workflow and keep the whole team aligned."
+        action={
+          <Link
+            href={`/projects/${projectId}/tasks`}
+            className="inline-flex rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 transition hover:border-blue-400 hover:text-blue-700"
+          >
+            View all tasks
+          </Link>
+        }
       />
       {board.isPending ? (
         <LoadingBlock />
@@ -591,67 +677,106 @@ export function Board({ projectId }: { projectId: string }) {
           retry={() => board.refetch()}
         />
       ) : (
-        <div className="grid gap-4 overflow-x-auto pb-4 xl:grid-cols-5">
-          {statuses.map((status) => (
-            <section
-              key={status}
-              className="min-w-60 rounded-2xl bg-[#f4f6fa] p-3"
-            >
-              <div className="mb-4 flex items-center justify-between px-2">
-                <h2 className="text-sm font-semibold">{labels[status]}</h2>
-                <span className="rounded-full bg-white px-2 py-0.5 text-xs text-slate-500">
-                  {board.data?.columns[status]?.length ?? 0}
-                </span>
-              </div>
-              <div className="space-y-3">
-                {board.data?.columns[status]?.map((task) => (
-                  <div
-                    key={task.id}
-                    className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+        <>
+          <div className="mb-6 grid gap-3 sm:grid-cols-3">
+            <div className="panel border-slate-200 px-5 py-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                All tasks
+              </p>
+              <p className="mt-2 text-2xl font-bold text-slate-950">
+                {totalTasks}
+              </p>
+            </div>
+            <div className="panel border-slate-200 px-5 py-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                In progress
+              </p>
+              <p className="mt-2 text-2xl font-bold text-blue-700">
+                {board.data?.columns.IN_PROGRESS?.length ?? 0}
+              </p>
+            </div>
+            <div className="panel border-slate-200 px-5 py-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                Completed
+              </p>
+              <p className="mt-2 text-2xl font-bold text-emerald-700">
+                {completedTasks}
+              </p>
+            </div>
+          </div>
+          <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
+            {statuses.map((status) => (
+              <section
+                key={status}
+                className="min-h-80 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-900/5"
+              >
+                <div className="mb-5 flex items-center justify-between gap-2 border-b border-slate-200 pb-4">
+                  <h2 className="text-sm font-bold text-slate-950">
+                    {labels[status]}
+                  </h2>
+                  <span
+                    className={`text-xs font-bold ${boardCountColor[status]}`}
                   >
-                    <Link
-                      href={`/tasks/${task.id}`}
-                      className="text-sm font-semibold hover:text-blue-600"
+                    {board.data?.columns[status]?.length ?? 0}
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {board.data?.columns[status]?.map((task) => (
+                    <div
+                      key={task.id}
+                      className="rounded-xl border border-slate-200 bg-white p-4 shadow-md shadow-slate-900/5 transition hover:border-blue-300 hover:shadow-lg"
                     >
-                      {task.title}
-                    </Link>
-                    <div className="mt-4 flex items-center justify-between">
-                      <PriorityPill priority={task.priority} />
-                      <span className="text-xs text-slate-400">
-                        {task.assignee?.name ?? "Unassigned"}
-                      </span>
-                    </div>
-                    {role !== "GUEST" && (
-                      <select
-                        aria-label={`Move ${task.title}`}
-                        className="mt-4 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs"
-                        value=""
-                        onChange={(e) =>
-                          move.mutate({
-                            id: task.id,
-                            status: e.target.value as TaskStatus,
-                          })
-                        }
+                      <Link
+                        href={`/tasks/${task.id}`}
+                        className="block text-sm font-bold leading-6 text-slate-950 hover:text-blue-700"
                       >
-                        <option value="">Move to...</option>
-                        {transitions[status].map((next) => (
-                          <option key={next} value={next}>
-                            {labels[next]}
-                          </option>
-                        ))}
-                      </select>
-                    )}
-                  </div>
-                ))}
-                {!board.data?.columns[status]?.length && (
-                  <p className="px-2 py-8 text-center text-xs text-slate-400">
-                    No tasks here
-                  </p>
-                )}
-              </div>
-            </section>
-          ))}
-        </div>
+                        {task.title}
+                      </Link>
+                      <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+                        <PriorityPill priority={task.priority} />
+                        <span className="text-xs font-semibold text-slate-700">
+                          {task.assignee?.name ?? "Unassigned"}
+                        </span>
+                      </div>
+                      {task.dueDate && (
+                        <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-slate-700">
+                          <CalendarDays size={13} />
+                          Due {formatDate(task.dueDate)}
+                        </p>
+                      )}
+                      {role !== "GUEST" && (
+                        <select
+                          aria-label={`Move ${task.title}`}
+                          className="mt-4 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-xs font-semibold text-slate-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                          value=""
+                          disabled={move.isPending}
+                          onChange={(e) =>
+                            move.mutate({
+                              id: task.id,
+                              status: e.target.value as TaskStatus,
+                            })
+                          }
+                        >
+                          <option value="">Move to...</option>
+                          {transitions[status].map((next) => (
+                            <option key={next} value={next}>
+                              {labels[next]}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                  ))}
+                  {!board.data?.columns[status]?.length && (
+                    <div className="grid min-h-28 place-items-center rounded-xl border border-dashed border-slate-300 px-3 text-center text-xs font-medium text-slate-700">
+                      No tasks in {labels[status].toLowerCase()}
+                    </div>
+                  )}
+                </div>
+              </section>
+            ))}
+          </div>
+        </>
       )}
     </>
   );
@@ -667,6 +792,7 @@ export function TaskDetail({ id }: { id: string }) {
     queryKey: ["task", id],
     queryFn: async () => (await api<Task>(`tasks/${id}`)).data,
   });
+  const assignable = useAssignableMembers(task.data?.projectId, canManage);
   const members = useQuery({
     queryKey: ["members", organization?.id, "assign"],
     queryFn: async () =>
@@ -760,7 +886,7 @@ export function TaskDetail({ id }: { id: string }) {
     <>
       <Link
         href={`/projects/${item.projectId}/tasks`}
-        className="mb-6 inline-flex items-center gap-2 text-sm text-slate-500"
+        className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-blue-700"
       >
         <ArrowLeft size={16} /> Project tasks
       </Link>
@@ -772,14 +898,14 @@ export function TaskDetail({ id }: { id: string }) {
       />
       <div className="grid gap-6 xl:grid-cols-[1.65fr_.8fr]">
         <div className="space-y-6">
-          <section className="panel p-6">
-            <h2 className="font-semibold">Subtasks</h2>
-            <div className="mt-4 divide-y divide-slate-100">
+          <section className="panel p-6 shadow-sm shadow-slate-900/5">
+            <h2 className="text-lg font-bold text-slate-950">Subtasks</h2>
+            <div className="mt-4 divide-y divide-slate-200">
               {item.subtasks?.map((subtask) => (
                 <Link
                   key={subtask.id}
                   href={`/tasks/${subtask.id}`}
-                  className="flex items-center gap-3 py-3 text-sm hover:text-blue-600"
+                  className="flex items-center gap-3 py-3 text-sm font-semibold text-slate-800 hover:text-blue-700"
                 >
                   <span className="size-4 rounded-full border border-slate-300" />
                   {subtask.title}
@@ -789,7 +915,7 @@ export function TaskDetail({ id }: { id: string }) {
                 </Link>
               ))}
               {!item.subtasks?.length && (
-                <p className="py-4 text-sm text-slate-500">No subtasks yet.</p>
+                <p className="py-4 text-sm text-slate-700">No subtasks yet.</p>
               )}
             </div>
             {role !== "GUEST" && (
@@ -814,20 +940,20 @@ export function TaskDetail({ id }: { id: string }) {
               </div>
             )}
           </section>
-          <section className="panel p-6">
-            <h2 className="font-semibold">Conversation</h2>
+          <section className="panel p-6 shadow-sm shadow-slate-900/5">
+            <h2 className="text-lg font-bold text-slate-950">Conversation</h2>
             <div className="mt-5 space-y-5">
               {item.comments?.map((entry) => (
                 <div key={entry.id} className="flex gap-3">
-                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
+                  <span className="w-5 shrink-0 text-center text-xs font-bold text-blue-800">
                     {initials(entry.author.name)}
                   </span>
-                  <div className="min-w-0 flex-1 rounded-xl bg-slate-50 p-4">
+                  <div className="min-w-0 flex-1 rounded-xl border border-slate-200 p-4">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold">
                         {entry.author.name}
                       </span>
-                      <span className="text-xs text-slate-400">
+                      <span className="text-xs font-medium text-slate-700">
                         {formatDate(entry.createdAt)}
                       </span>
                     </div>
@@ -850,7 +976,7 @@ export function TaskDetail({ id }: { id: string }) {
                 </div>
               ))}
               {!item.comments?.length && (
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-700">
                   No comments yet. Start the conversation.
                 </p>
               )}
@@ -925,7 +1051,7 @@ export function TaskDetail({ id }: { id: string }) {
                             );
                           })}
                         {members.isPending && (
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-slate-700">
                             Loading teammates…
                           </span>
                         )}
@@ -933,7 +1059,7 @@ export function TaskDetail({ id }: { id: string }) {
                           !members.data?.some(
                             (member) => member.user.id !== user.id,
                           ) && (
-                            <span className="text-xs text-slate-500">
+                            <span className="text-xs text-slate-700">
                               No teammates available to mention.
                             </span>
                           )}
@@ -960,8 +1086,8 @@ export function TaskDetail({ id }: { id: string }) {
               </form>
             )}
           </section>
-          <section className="panel p-6">
-            <h2 className="font-semibold">Files</h2>
+          <section className="panel p-6 shadow-sm shadow-slate-900/5">
+            <h2 className="text-lg font-bold text-slate-950">Files</h2>
             <div className="mt-4 space-y-2">
               {item.attachments?.map((file) => (
                 <a
@@ -969,18 +1095,18 @@ export function TaskDetail({ id }: { id: string }) {
                   href={file.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-2 rounded-xl border border-slate-100 p-3 text-sm text-blue-600"
+                  className="flex items-center gap-2 rounded-xl border border-slate-200 p-3 text-sm font-semibold text-blue-700 hover:border-blue-400"
                 >
                   <Paperclip size={16} />
                   {file.name}
                 </a>
               ))}
               {!item.attachments?.length && (
-                <p className="text-sm text-slate-500">No files attached.</p>
+                <p className="text-sm text-slate-700">No files attached.</p>
               )}
             </div>
             {role !== "GUEST" && (
-              <label className="mt-5 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium">
+              <label className="mt-5 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50">
                 <UploadCloud size={16} /> Upload file
                 <input
                   type="file"
@@ -992,7 +1118,7 @@ export function TaskDetail({ id }: { id: string }) {
             )}
             {uploadProgress !== null && (
               <div className="mt-3 max-w-xs">
-                <p className="mb-1 truncate text-xs text-slate-500">
+                <p className="mb-1 truncate text-xs text-slate-700">
                   Uploading {uploadName} · {uploadProgress}%
                 </p>
                 <div className="h-1.5 rounded-full bg-slate-100">
@@ -1006,28 +1132,30 @@ export function TaskDetail({ id }: { id: string }) {
           </section>
         </div>
         <aside className="space-y-6">
-          <section className="panel p-6">
-            <h2 className="font-semibold">Details</h2>
+          <section className="panel p-6 shadow-sm shadow-slate-900/5">
+            <h2 className="text-lg font-bold text-slate-950">Details</h2>
             <dl className="mt-5 space-y-5 text-sm">
               <div>
-                <dt className="text-slate-500">Priority</dt>
+                <dt className="font-medium text-slate-700">Priority</dt>
                 <dd className="mt-1">
                   <PriorityPill priority={item.priority} />
                 </dd>
               </div>
               <div>
-                <dt className="text-slate-500">Due date</dt>
-                <dd className="mt-1 font-medium">{formatDate(item.dueDate)}</dd>
+                <dt className="font-medium text-slate-700">Due date</dt>
+                <dd className="mt-1 font-semibold text-slate-950">
+                  {formatDate(item.dueDate)}
+                </dd>
               </div>
               <div>
-                <dt className="text-slate-500">Assignee</dt>
-                <dd className="mt-1 font-medium">
+                <dt className="font-medium text-slate-700">Assignee</dt>
+                <dd className="mt-1 font-semibold text-slate-950">
                   {item.assignee?.name ?? "Unassigned"}
                 </dd>
               </div>
               <div>
-                <dt className="text-slate-500">Reporter</dt>
-                <dd className="mt-1 font-medium">
+                <dt className="font-medium text-slate-700">Reporter</dt>
+                <dd className="mt-1 font-semibold text-slate-950">
                   {item.reporter?.name ?? "—"}
                 </dd>
               </div>
@@ -1057,12 +1185,8 @@ export function TaskDetail({ id }: { id: string }) {
                             [["task", id]],
                           )
                         }
-                        className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium ${selected ? "border-blue-200 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600"}`}
+                        className={`inline-flex items-center gap-2 border-b pb-1 text-xs font-semibold ${selected ? "border-blue-700 text-blue-800" : "border-transparent text-slate-700"}`}
                       >
-                        <span
-                          className="size-2.5 rounded-full"
-                          style={{ backgroundColor: label.color }}
-                        />
                         {label.name}
                       </button>
                     );
@@ -1112,6 +1236,7 @@ export function TaskDetail({ id }: { id: string }) {
                   id="assign-task"
                   className="field"
                   value={item.assigneeId ?? ""}
+                  disabled={assignable.isPending || assignable.isError}
                   onChange={(e) =>
                     act(
                       () =>
@@ -1125,14 +1250,29 @@ export function TaskDetail({ id }: { id: string }) {
                   }
                 >
                   <option value="">Unassigned</option>
-                  {members.data
-                    ?.filter((member) => member.role !== "GUEST")
-                    .map((member) => (
-                      <option key={member.user.id} value={member.user.id}>
-                        {member.user.name}
+                  {item.assigneeId &&
+                    !assignable.users.some(
+                      (person) => person.id === item.assigneeId,
+                    ) && (
+                      <option value={item.assigneeId} disabled>
+                        Current assignee is outside this team
                       </option>
-                    ))}
+                    )}
+                  {assignable.users.map((person) => (
+                    <option key={person.id} value={person.id}>
+                      {person.name}
+                    </option>
+                  ))}
                 </select>
+                <p className="mt-2 text-xs font-medium text-slate-700">
+                  {assignable.isError
+                    ? "Assignees could not be loaded. Try again shortly."
+                    : assignable.isPending
+                      ? "Loading eligible teammates…"
+                      : assignable.teamName
+                        ? `Only ${assignable.teamName} team members can be assigned.`
+                        : "Choose a workspace member for this project."}
+                </p>
               </div>
             )}
           </section>
@@ -1141,12 +1281,12 @@ export function TaskDetail({ id }: { id: string }) {
             <div className="mt-5 space-y-4">
               {item.activity?.slice(0, 8).map((entry) => (
                 <div key={entry.id} className="flex gap-3 text-xs">
-                  <span className="mt-1.5 size-2 shrink-0 rounded-full bg-blue-500" />
+                  <span className="mt-1.5 size-2 shrink-0 rounded-full border-2 border-blue-700" />
                   <div>
                     <p className="font-medium text-slate-700">
                       {entry.action.replaceAll("_", " ").toLowerCase()}
                     </p>
-                    <p className="mt-1 text-slate-400">
+                    <p className="mt-1 text-slate-600">
                       {entry.actor?.name ?? "System"} ·{" "}
                       {formatDate(entry.createdAt)}
                     </p>
@@ -1154,7 +1294,7 @@ export function TaskDetail({ id }: { id: string }) {
                 </div>
               ))}
               {!item.activity?.length && (
-                <p className="text-sm text-slate-500">No activity yet.</p>
+                <p className="text-sm text-slate-700">No activity yet.</p>
               )}
             </div>
           </section>

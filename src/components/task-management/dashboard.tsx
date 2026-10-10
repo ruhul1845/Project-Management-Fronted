@@ -370,7 +370,7 @@ export default function Dashboard() {
                 <Link
                   key={project.id}
                   href={`/projects/${project.id}`}
-                  className="flex items-center gap-4 rounded-xl border border-slate-100 p-4 hover:border-blue-200 hover:bg-blue-50/40"
+                  className="flex items-center gap-4 rounded-xl border border-slate-100 p-4 hover:border-blue-200 hover:text-blue-700"
                 >
                   <span className="text-xs font-bold tracking-wide text-blue-600">
                     {project.key.slice(0, 3)}

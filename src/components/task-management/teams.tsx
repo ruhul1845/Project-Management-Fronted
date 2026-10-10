@@ -151,7 +151,7 @@ export function Teams() {
         }}
         className="relative mb-5 max-w-sm"
       >
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-600" />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -182,11 +182,11 @@ export function Teams() {
             >
               <UsersRound size={24} className="text-blue-600" />
               <h2 className="mt-5 text-lg font-semibold">{team.name}</h2>
-              <p className="mt-2 min-h-10 text-sm text-slate-500">
+              <p className="mt-2 min-h-10 text-sm text-slate-700">
                 {team.description ||
                   "Open the team to see members and projects."}
               </p>
-              <p className="mt-5 border-t pt-4 text-xs text-slate-500">
+              <p className="mt-5 border-t pt-4 text-xs text-slate-700">
                 {team._count?.members ?? 0} members ·{" "}
                 {team._count?.projects ?? 0} projects
               </p>
@@ -244,7 +244,7 @@ export function TeamDetail({ id }: { id: string }) {
     <>
       <Link
         href="/teams"
-        className="mb-6 inline-flex items-center gap-2 text-sm text-slate-500"
+        className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-blue-700"
       >
         <ArrowLeft size={16} /> All teams
       </Link>
@@ -256,25 +256,30 @@ export function TeamDetail({ id }: { id: string }) {
         }
       />
       <div className="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
-        <section className="panel p-6">
-          <h2 className="text-lg font-semibold">Team members</h2>
-          <div className="mt-5 divide-y divide-slate-100">
+        <section className="panel p-6 shadow-sm shadow-slate-900/5 sm:p-7">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-lg font-bold text-slate-950">Team members</h2>
+            <span className="text-sm font-semibold text-slate-700">
+              {item.members?.length ?? 0} people
+            </span>
+          </div>
+          <div className="mt-5 divide-y divide-slate-200">
             {item.members?.map((member) => (
-              <div key={member.id} className="flex items-center gap-3 py-4">
-                <span className="grid size-9 place-items-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
+              <div key={member.id} className="flex items-center gap-3 py-5">
+                <span className="w-5 shrink-0 text-center text-xs font-bold text-blue-800">
                   {initials(member.user?.name ?? "User")}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-semibold">
+                  <span className="block truncate text-sm font-bold text-slate-950">
                     {member.user?.name}
                   </span>
-                  <span className="block truncate text-xs text-slate-500">
+                  <span className="block truncate text-xs font-medium text-slate-700">
                     {member.user?.email}
                   </span>
                 </span>
-                <Pill tone={member.role === "LEAD" ? "blue" : "slate"}>
+                <span className="text-xs font-bold uppercase tracking-wide text-slate-700">
                   {member.role}
-                </Pill>
+                </span>
                 {canEdit && (
                   <button
                     type="button"
@@ -291,7 +296,7 @@ export function TeamDetail({ id }: { id: string }) {
                           [["team", id]],
                         );
                     }}
-                    className="text-slate-400 hover:text-rose-600"
+                    className="rounded-lg p-2 text-slate-600 hover:text-rose-700"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -299,7 +304,9 @@ export function TeamDetail({ id }: { id: string }) {
               </div>
             ))}
             {!item.members?.length && (
-              <p className="py-4 text-sm text-slate-500">No members yet.</p>
+              <p className="py-4 text-sm font-medium text-slate-700">
+                No members yet.
+              </p>
             )}
           </div>
           {canEdit && (
@@ -308,7 +315,7 @@ export function TeamDetail({ id }: { id: string }) {
                 e.preventDefault();
                 memberForm.handleSubmit();
               }}
-              className="mt-6 grid gap-3 border-t pt-5 sm:grid-cols-[1fr_auto_auto]"
+              className="mt-6 grid gap-3 border-t border-slate-200 pt-5 sm:grid-cols-[1fr_auto_auto]"
             >
               <memberForm.Field name="email">
                 {(field) => (
@@ -353,20 +360,20 @@ export function TeamDetail({ id }: { id: string }) {
             </form>
           )}
         </section>
-        <section className="panel p-6">
-          <h2 className="text-lg font-semibold">Linked projects</h2>
+        <section className="panel p-6 shadow-sm shadow-slate-900/5 sm:p-7">
+          <h2 className="text-lg font-bold text-slate-950">Linked projects</h2>
           <div className="mt-5 space-y-2">
             {item.projects?.map((project) => (
               <Link
                 key={project.id}
                 href={`/projects/${project.id}`}
-                className="block rounded-xl border border-slate-100 p-4 text-sm font-medium hover:border-blue-200"
+                className="block rounded-xl border border-slate-200 p-4 text-sm font-bold text-slate-950 transition hover:border-blue-300 hover:text-blue-700"
               >
                 {project.name}
               </Link>
             ))}
             {!item.projects?.length && (
-              <p className="text-sm text-slate-500">
+              <p className="text-sm font-medium text-slate-700">
                 No projects linked to this team.
               </p>
             )}
@@ -501,7 +508,7 @@ export function Members() {
       >
         <Search
           size={16}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-600"
         />
         <input
           value={search}
@@ -526,14 +533,14 @@ export function Members() {
                 key={member.id}
                 className="flex flex-wrap items-center gap-3 px-5 py-4"
               >
-                <span className="grid size-10 place-items-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
+                <span className="w-5 shrink-0 text-center text-xs font-bold text-blue-800">
                   {initials(member.user.name)}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-sm font-semibold">
                     {member.user.name}
                   </span>
-                  <span className="block text-xs text-slate-500">
+                  <span className="block text-xs text-slate-700">
                     {member.user.email}
                   </span>
                 </span>
@@ -579,7 +586,7 @@ export function Members() {
                           [["members", organization?.id ?? ""]],
                         );
                     }}
-                    className="text-slate-400 hover:text-rose-600"
+                    className="text-slate-600 hover:text-rose-600"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -595,7 +602,7 @@ export function Members() {
         />
       )}
       {members.data && (
-        <div className="mt-5 flex justify-between text-sm text-slate-500">
+        <div className="mt-5 flex justify-between text-sm text-slate-700">
           <span>{members.data.meta?.total ?? 0} members</span>
           <div className="flex gap-2">
             <button
