@@ -22,6 +22,220 @@ interface AdminMetrics {
   projects: number;
   tasks: number;
 }
+type CreationPeriod = "day" | "week" | "month" | "year";
+type CreationMetric = "users" | "organizations" | "projects" | "tasks";
+interface CreationBucket {
+  start: string;
+  users: number;
+  organizations: number;
+  projects: number;
+  tasks: number;
+}
+interface CreationStatistics {
+  period: CreationPeriod;
+  timezone: "UTC";
+  from: string;
+  to: string;
+  buckets: CreationBucket[];
+}
+const creationMetrics: { label: string; key: CreationMetric; color: string }[] =
+  [
+    { label: "Users", key: "users", color: "bg-blue-600" },
+    { label: "Organizations", key: "organizations", color: "bg-indigo-500" },
+    { label: "Projects", key: "projects", color: "bg-sky-500" },
+    { label: "Tasks", key: "tasks", color: "bg-cyan-500" },
+  ];
+const creationPeriods: { label: string; key: CreationPeriod }[] = [
+  { label: "Day", key: "day" },
+  { label: "Week", key: "week" },
+  { label: "Month", key: "month" },
+  { label: "Year", key: "year" },
+];
+function bucketLabel(
+  start: string,
+  period: CreationPeriod,
+  index: number,
+  count: number,
+) {
+  const date = new Date(start);
+  if (period === "day")
+    return index % 4 === 0 || index === count - 1
+      ? new Intl.DateTimeFormat("en-US", {
+          hour: "2-digit",
+          hourCycle: "h23",
+          timeZone: "UTC",
+        }).format(date)
+      : "";
+  if (period === "week")
+    return new Intl.DateTimeFormat("en-US", {
+      weekday: "short",
+      timeZone: "UTC",
+    }).format(date);
+  if (period === "month")
+    return index % 5 === 0 || index === count - 1
+      ? String(date.getUTCDate())
+      : "";
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    timeZone: "UTC",
+  }).format(date);
+}
+function CreationTrends() {
+  const [period, setPeriod] = useState<CreationPeriod>("week");
+  const [metric, setMetric] = useState<CreationMetric>("users");
+  const data = useQuery({
+    queryKey: ["admin", "creation-statistics", period],
+    queryFn: async () =>
+      (
+        await api<CreationStatistics>(
+          `admin/creation-statistics?period=${period}`,
+        )
+      ).data,
+    retry: false,
+    refetchInterval: 60000,
+  });
+  const selected =
+    creationMetrics.find((item) => item.key === metric) ?? creationMetrics[0];
+  const buckets = data.data?.buckets ?? [];
+  const values = buckets.map((bucket) => bucket[metric]);
+  const total = values.reduce((sum, value) => sum + value, 0);
+  const chartMax = Math.max(
+    5,
+    Math.ceil((Math.max(...values, 0) * 1.2) / 5) * 5,
+  );
+  return (
+    <section className="panel p-5 sm:p-7">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-950">
+            Creation trends
+          </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            New records this {period}, grouped in UTC.
+          </p>
+        </div>
+        <fieldset className="flex rounded-xl border border-slate-200 bg-slate-50 p-1">
+          <legend className="sr-only">Statistics period</legend>
+          {creationPeriods.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              aria-pressed={period === item.key}
+              onClick={() => setPeriod(item.key)}
+              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${period === item.key ? "bg-white text-blue-700 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </fieldset>
+      </div>
+      <div className="mt-5 flex flex-wrap items-center gap-2">
+        {creationMetrics.map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            aria-pressed={metric === item.key}
+            onClick={() => setMetric(item.key)}
+            className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${metric === item.key ? "border-blue-200 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-800"}`}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+      {data.isPending ? (
+        <div className="mt-8 h-72 animate-pulse rounded-xl bg-slate-50" />
+      ) : data.isError ? (
+        <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 px-5 py-8 text-center text-sm text-slate-500">
+          Creation history is temporarily unavailable.
+        </div>
+      ) : (
+        <>
+          <p className="mt-6 text-sm text-slate-500">
+            <span className="text-2xl font-semibold text-slate-950">
+              {total}
+            </span>{" "}
+            {selected.label.toLowerCase()} created this {period}
+          </p>
+          <div className="mt-7 overflow-x-auto pb-2">
+            <div
+              style={{
+                minWidth:
+                  period === "day" || period === "month"
+                    ? 900
+                    : period === "year"
+                      ? 700
+                      : 520,
+              }}
+              role="img"
+              aria-label={`${selected.label} created this ${period}: ${total}. ${values.map((value, index) => `Bucket ${index + 1}: ${value}`).join(", ")}`}
+            >
+              <div className="grid grid-cols-[2rem_minmax(0,1fr)] gap-3">
+                <div className="flex h-64 flex-col justify-between text-right text-xs text-slate-400">
+                  <span>{chartMax}</span>
+                  <span>{chartMax / 2}</span>
+                  <span>0</span>
+                </div>
+                <div className="relative h-64 border-b border-slate-200">
+                  <div className="pointer-events-none absolute inset-0 flex flex-col justify-between">
+                    <span className="border-t border-dashed border-slate-200" />
+                    <span className="border-t border-dashed border-slate-200" />
+                    <span />
+                  </div>
+                  <div
+                    className="absolute inset-0 grid items-end gap-1 px-2 sm:gap-2"
+                    style={{
+                      gridTemplateColumns: `repeat(${buckets.length}, minmax(0, 1fr))`,
+                    }}
+                  >
+                    {buckets.map((bucket, index) => (
+                      <div
+                        key={bucket.start}
+                        className="flex h-full items-end justify-center"
+                      >
+                        <div
+                          className={`relative w-full rounded-t-md ${selected.color}`}
+                          style={{
+                            height: values[index]
+                              ? `${(values[index] / chartMax) * 100}%`
+                              : 3,
+                          }}
+                          title={`${bucket.start}: ${values[index]} ${selected.label.toLowerCase()}`}
+                        >
+                          {values[index] > 0 && (
+                            <span className="absolute bottom-full left-1/2 mb-1 -translate-x-1/2 text-[10px] font-semibold text-slate-700">
+                              {values[index]}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div
+                className="ml-11 grid gap-1 px-2 pt-3 text-center text-[10px] text-slate-500 sm:gap-2"
+                style={{
+                  gridTemplateColumns: `repeat(${buckets.length}, minmax(0, 1fr))`,
+                }}
+              >
+                {buckets.map((bucket, index) => (
+                  <span key={bucket.start}>
+                    {bucketLabel(bucket.start, period, index, buckets.length)}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+          {total === 0 && (
+            <p className="mt-2 text-center text-xs text-slate-500">
+              No new {selected.label.toLowerCase()} in this period.
+            </p>
+          )}
+        </>
+      )}
+    </section>
+  );
+}
 function AdminGate({ children }: { children: React.ReactNode }) {
   const { user } = useWorkspace();
   return user.role === "ADMIN" ? (
@@ -97,6 +311,7 @@ export function AdminOverview() {
               </div>
             ))}
           </div>
+          <CreationTrends />
           <section className="panel p-5 sm:p-7">
             <h2 className="text-lg font-semibold text-slate-950">
               Platform metrics
