@@ -135,7 +135,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             ? [{ label: "Members", href: "/members", icon: Users }]
             : []),
           { label: "Calendar", href: "/calendar", icon: CalendarDays },
-          { label: "Notifications", href: "/notifications", icon: Bell },
           ...(canManage
             ? [
                 {
@@ -316,11 +315,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               </span>
               <span className="hidden text-slate-300 sm:inline">/</span>
               <span className="text-sm font-semibold text-slate-900">
-                {nav.find(
-                  (item) =>
-                    pathname === item.href ||
-                    pathname.startsWith(`${item.href}/`),
-                )?.label ?? "Overview"}
+                {pathname === "/notifications"
+                  ? "Notifications"
+                  : (nav.find(
+                      (item) =>
+                        pathname === item.href ||
+                        pathname.startsWith(`${item.href}/`),
+                    )?.label ?? "Overview")}
               </span>
             </div>
             <div className="flex items-center gap-3">

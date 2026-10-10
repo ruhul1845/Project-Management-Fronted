@@ -100,21 +100,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-      <section className="bg-[#f6f8fc] px-5 py-20 md:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 rounded-[30px] border border-blue-100 bg-white px-8 py-14 text-center soft-shadow md:flex-row md:px-14 md:text-left">
-          <div>
-            <p className="eyebrow">Move forward, together</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">
-              Ready for a clearer workday?
-            </h2>
-            <p className="mt-3 text-slate-500">
-              Create your workspace and bring your team&apos;s projects into
-              focus.
-            </p>
-          </div>
-          <PrimaryLink href="/register">Create an account</PrimaryLink>
-        </div>
-      </section>
     </main>
   );
 }
