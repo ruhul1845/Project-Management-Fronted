@@ -7,7 +7,6 @@ import {
   EyeOff,
   LockKeyhole,
   ShieldCheck,
-  UserRound,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -75,10 +74,11 @@ export function AuthFrame({
       <div
         className="hidden bg-white px-12 pb-16 pt-20 lg:flex lg:flex-col xl:px-16 xl:pt-24"
         style={{
-          backgroundImage: "url('/img/login-bg.jpg')",
-          backgroundPosition: "center bottom",
+          backgroundImage:
+            "linear-gradient(to bottom, rgb(255 255 255 / 96%), rgb(255 255 255 / 85%) 35%, rgb(255 255 255 / 15%) 75%), url('/img/login.jpg')",
+          backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          backgroundSize: "90% auto",
+          backgroundSize: "cover",
         }}
       >
         <div className="mx-auto w-full max-w-lg">
@@ -303,7 +303,6 @@ export function LoginForm() {
             { role: "ADMIN", icon: ShieldCheck, label: "Admin" },
             { role: "OWNER", icon: LockKeyhole, label: "Owner" },
             { role: "MANAGER", icon: Users, label: "Manager" },
-            { role: "MEMBER", icon: UserRound, label: "Member" },
           ].map(({ role, icon: Icon, label }) => (
             <button
               key={role}
@@ -315,14 +314,16 @@ export function LoginForm() {
                   ? "Demo account is not configured"
                   : `Sign in as ${label}`
               }
-              className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-3 text-xs font-semibold text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-45"
+              className={`flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-3 text-xs font-semibold text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-45 ${role === "MANAGER" ? "col-span-2" : ""}`}
             >
               <Icon size={15} />
               {label}
             </button>
           ))}
         </div>
-        {!Object.values(demos).some(Boolean) && (
+        {!(["ADMIN", "OWNER", "MANAGER"] as const).some(
+          (role) => demos[role],
+        ) && (
           <p className="mt-2 text-xs text-slate-400">
             Demo accounts can be enabled with dedicated credentials in the
             frontend environment.
