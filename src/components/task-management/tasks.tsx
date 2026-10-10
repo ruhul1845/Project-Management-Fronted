@@ -105,6 +105,14 @@ export function TaskCreator({
             }),
           ),
         parentId ? "Subtask created" : "Task created",
+        [
+          ["tasks"],
+          ["kanban", projectId],
+          ["project", projectId],
+          ["analytics"],
+          ["calendar"],
+          ["notifications", "count"],
+        ],
       );
       if (ok) onClose();
     },
@@ -230,12 +238,17 @@ export function TaskCreator({
           </form.Field>
         )}
         <div className="flex items-end">
-          <button
-            type="submit"
-            className="h-11 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white"
-          >
-            Save task
-          </button>
+          <form.Subscribe selector={(state) => state.isSubmitting}>
+            {(isSubmitting) => (
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="h-11 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white disabled:cursor-wait disabled:opacity-70"
+              >
+                {isSubmitting ? "Creating task…" : "Save task"}
+              </button>
+            )}
+          </form.Subscribe>
         </div>
       </form>
     </div>

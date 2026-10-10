@@ -69,9 +69,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   });
   const unread = useQuery({
     queryKey: ["notifications", "count"],
-    queryFn: async () => (await api<number>("notifications/unread-count")).data,
+    queryFn: async () =>
+      (await api<{ count: number }>("notifications/unread-count")).data.count,
     enabled: Boolean(me.data?.success),
-    refetchInterval: 60000,
+    staleTime: 0,
+    refetchInterval: 15000,
+    refetchOnWindowFocus: "always",
   });
   useEffect(() => {
     if (me.isSuccess && !me.data?.success) router.replace("/login");
@@ -344,7 +347,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               >
                 <Bell size={17} />
                 {typeof unread.data === "number" && unread.data > 0 && (
-                  <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-blue-600" />
+                  <span className="absolute -right-2 -top-2 flex min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold leading-5 text-white">
+                    {unread.data > 99 ? "99+" : unread.data}
+                  </span>
                 )}
               </Link>
               <span className="grid size-9 place-items-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">

@@ -64,6 +64,7 @@ function ProjectCreator({ onClose }: { onClose: () => void }) {
             }),
           ),
         "Project created",
+        [["projects"], ["teams"], ["organizations", "mine"], ["analytics"]],
       );
       if (ok) onClose();
     },
@@ -174,12 +175,17 @@ function ProjectCreator({ onClose }: { onClose: () => void }) {
           )}
         </form.Field>
         <div className="flex items-end">
-          <button
-            type="submit"
-            className="h-11 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white"
-          >
-            Create project
-          </button>
+          <form.Subscribe selector={(state) => state.isSubmitting}>
+            {(isSubmitting) => (
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="h-11 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white disabled:cursor-wait disabled:opacity-70"
+              >
+                {isSubmitting ? "Creating project…" : "Create project"}
+              </button>
+            )}
+          </form.Subscribe>
         </div>
       </form>
     </div>

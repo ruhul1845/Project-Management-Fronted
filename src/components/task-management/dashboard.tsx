@@ -51,16 +51,28 @@ export function CreateWorkspace() {
       let createdId = "";
       const ok = await act(
         async () => {
-          createdId = (
+          const created = (
             await api<Organization>("organizations", json("POST", value))
-          ).data.id;
+          ).data;
+          createdId = created.id;
+          const workspace: Organization = {
+            ...created,
+            memberships: [{ role: "OWNER" }],
+          };
+          client.setQueryData<Organization[]>(
+            ["organizations", "mine"],
+            (old) => [
+              workspace,
+              ...(old ?? []).filter((item) => item.id !== workspace.id),
+            ],
+          );
         },
         "Workspace created",
         [["organizations", "mine"]],
       );
       if (ok && createdId) {
         setOrganizationId(createdId);
-        client.invalidateQueries({ queryKey: ["me"] });
+        void client.invalidateQueries({ queryKey: ["me"] });
         router.replace("/workspace");
       }
     },
@@ -176,12 +188,19 @@ export function CreateWorkspace() {
                 >
                   Back
                 </button>
-                <button
-                  type="submit"
-                  className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white"
-                >
-                  Create workspace
-                </button>
+                <form.Subscribe selector={(state) => state.isSubmitting}>
+                  {(isSubmitting) => (
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white disabled:cursor-wait disabled:opacity-70"
+                    >
+                      {isSubmitting
+                        ? "Creating workspace…"
+                        : "Create workspace"}
+                    </button>
+                  )}
+                </form.Subscribe>
               </div>
             </>
           )}

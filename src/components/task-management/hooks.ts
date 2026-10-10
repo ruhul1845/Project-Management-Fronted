@@ -30,8 +30,8 @@ export function useAction() {
       await run();
       if (keys)
         for (const key of keys)
-          await client.invalidateQueries({ queryKey: key });
-      else await client.invalidateQueries();
+          void client.invalidateQueries({ queryKey: key });
+      else void client.invalidateQueries();
       toast.add({ title: success, type: "success" });
       return true;
     } catch (error) {
